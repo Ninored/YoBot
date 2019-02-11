@@ -1,0 +1,10 @@
+---
+- host: all
+  tasks:
+    - name: Clone project
+
+    - name: Clone deps
+
+    - name: Build deps
+
+    - name: Build project

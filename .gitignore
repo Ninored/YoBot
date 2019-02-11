@@ -1,6 +1,9 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
+build/
+.vscode/
 
-/x64
-/.vs/YoBot/v15
+bin/
+lib/
+
+tags
+
+CMakeFiles

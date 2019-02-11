@@ -1,0 +1,21 @@
+set(CMAKE_CXX_FLAGS_RELEASE "/MT")
+set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+##### TechTree Lib
+file(GLOB techtree_sources ./TechTree/*.cpp ./TechTree/*.hpp)
+add_library(TechTreeLib ${techtree_sources})
+
+target_include_directories(TechTreeLib
+    PUBLIC ${PROJECT_SOURCE_DIR}/include 
+    PUBLIC ${s2lib_INCLUDES}
+
+    PRIVATE ./TechTree
+    )
+set_property(TARGET TechTreeLib PROPERTY CXX_STANDARD 17)
+target_link_libraries(TechTreeLib ${s2lib_LIBRARIES})
+
+
+
+##### TechTree Executable
+add_executable(TechTreeGenerator apps/TechTreeMain.cpp)
+target_link_libraries(TechTreeGenerator TechTreeLib)
+target_compile_features(TechTreeGenerator PRIVATE cxx_std_17)

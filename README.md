@@ -1,23 +1,25 @@
-# YoBot
-
-A very simple Starcraft 2 AI Bot
-
-The bot itself lives in YoBot.h
-
-It does a dirty 4 gate rush zealot.
+## Windows
 
 
-Based on files of CryptBot ladder example, see https://github.com/Cryptyc/CryptBot
+### Setup dependencies
 
-This bot is meant to compete in the sc2ai ladder competition : https://www.sc2ai.net/
+This project require `s2client-api`, please execute the following commands to build it:
 
-It did well there, having been ranked up to first place on ladder in season 6 where it held that place for two weeks.
+```
+cd s2client-api
+mkdir build
+cd build
+cmake -G "Visual Studio 15 2017 Win64" ../
+msbuild /m:4 s2client-api.sln
+```
 
-This Bot Code is placed under Gnu General Public License v3, see LICENSE file.
-This means you can reuse code from it only if you are using a compatible (FOSS) license.
+### Build
 
-In particular, any bot submitted to ladder or competitions using code from YoBot is an executable binary that meets the conditions of GPL, and thus falls under the contaminating clause of open source, and must have a public hosting for it's sources.
+To build the project use the following commands:
 
-With this condition met, feel free to reuse and adapt the code for your own use, and meet me on Ladder !
-
-We are very open to contributors, ideas etc... please use the issues or discord channel @ sc2ai.
+```
+mkdir build
+cd build
+cmake -G "Visual Studio 15 2017 Win64" ../
+msbuild /m:4 YoYoBot.sln
+```
