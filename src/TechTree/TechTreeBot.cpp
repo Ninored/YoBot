@@ -1,7 +1,8 @@
 #include "TechTree/TechTreeBot.h"
-#include "TechTree/TechTree.h"
+#include <algorithm>
 #include <iostream>
 #include <vector>
+#include "TechTree/TechTree.h"
 #include "sc2api/sc2_action.h"
 #include "sc2api/sc2_interfaces.h"
 #include "sc2api/sc2_map_info.h"
@@ -54,25 +55,29 @@ void TechTreeBot::OnStep() {
   auto &types = Observation()->GetUnitTypeData();
   auto &abilities = Observation()->GetAbilityData();
 
-  std::unordered_map<int, int> abilityToUnit;
+  std::unordered_map<int, std::vector<AbilityId>> unitToAbilities;
+
   for (auto u : Observation()->GetUnits(sc2::Unit::Alliance::Self)) {
     auto &abilities = Query()->GetAbilitiesForUnit(u, true);
-    for (auto &ab : abilities.abilities) {
-      abilityToUnit[(int)ab.ability_id] = (int)u->unit_type;
+    unitToAbilities.insert({(int)u->unit_type, std::vector<AbilityId>()});
+    for (auto ab : abilities.abilities) {
+      unitToAbilities[(int)u->unit_type].push_back((int)ab.ability_id);
     }
   }
 
   for (const sc2::UnitTypeData &unitdesc : types) {
-    std::cout << unitdesc.name << std::endl;
-
-    /*TechTree::getTechTree().addUnit({
+    TechTree::getTechTree().addUnit({
         unitdesc.unit_type_id,
         unitdesc.name,
         unitdesc.mineral_cost,
         unitdesc.vespene_cost,
-        unitdesc.food_required + unitdesc.food_provided,
-    })*/
+        (int)unitdesc.food_required + (int)unitdesc.food_provided,
+        unitToAbilities[unitdesc.unit_type_id],
+        unitdesc.tech_requirement,
+    });
   }
+
+  std::cout << TechTree::getTechTree() << std::endl;
 }
 
-} // namespace suboo
+}  // namespace suboo

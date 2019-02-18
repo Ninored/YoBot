@@ -1,33 +1,42 @@
 #ifndef TECHTREE_H
 #define TECHTREE_H
 
+#include <unordered_map>
 #include <vector>
-#include "sc2api/sc2_agent.h"
+#include "sc2api/sc2_data.h"
 #include "sc2api/sc2_unit.h"
 
 namespace suboo {
 
-using UnitId = sc2::UnitTypeID;  // Type using
+using UnitId = sc2::UnitTypeID;   // UnitId using
+using AbilityId = sc2::AbilityID; // AbilityId using
 
 /**
  * Unit Class
  */
 class Unit {
  public:
-  UnitId type;       // Unit id
+  UnitId id;       // Unit id
   std::string name;  // Unit name
   int mineral_cost;  // Unit mineral costs
   int vespene_cost;  // Unit vespene costs
   int food_cost;     // Unit food costs (can be positive)
+  std::vector<AbilityId> abilities;  // Abilities of the unit
 
-  UnitId builder;                    // Unit required to build
-  std::vector<UnitId> requirements;  // Tech requirement
+  UnitId builder;      // Unit required to build
+  UnitId requirement;  // Tech requirement
 
   int production_time;  // Unit creation time
   int travel_time;      // Unit travel time
 
   enum Status { BUSY, TRAVELLING, CONSUMING };
   Status acton_status;  // Unit action behavior
+  
+  // Operators
+  std::size_t operator()(const Unit& k) const;
+  bool operator==(const Unit& othre) const;
+
+  // Firends
   friend std::ostream& operator<<(std::ostream& os, const Unit& u);
 };
 
@@ -46,17 +55,21 @@ class UnitInstance {
 };
 
 /**
- * @brief Singleton class used to query information about units
+ * Singleton class used to query information about units
  * It can be serialized and deserialized
  */
 class TechTree {
-  std::vector<Unit> units_vec;
-  sc2::Agent agent;
+  std::vector<Unit> units;
+  std::vector<UnitId> index;
+  std::unordered_map<int, Unit> map;
   TechTree();
-  
+
  public:
+  friend std::ostream& operator<<(std::ostream& os, const TechTree& t);
   static TechTree& getTechTree();
-  sc2::Agent* getAgent();
+  const Unit& getUnit(UnitId) const;
+  const std::unordered_map<int, Unit>& getMap() const { return map; };
+  void addUnit(Unit u);
 };
 }  // namespace suboo
 
