@@ -133,13 +133,15 @@ namespace suboo {
 		TRANSFER_VESPENE,
 		TRANSFER_MINERALS,
 		WAIT_GOAL,
-		CHRONO
+		//CHRONO
 	};
 
 	class BuildItem {
 		BuildAction action;
 		UnitId target;
 		int time;
+
+		float chronoboost;//vaut 1 ou 1.5, à multiplier par la vitesse d'une action ?
 	public :		
 		int timeMin=0, timeVesp=0, timePre=0, timeFree=0, timeFood=0;
 		int totalWait() const  { return timeMin + timeVesp + timePre + timeFree + timeFood;}
@@ -157,7 +159,11 @@ namespace suboo {
 		UnitId getTarget() const { return target; }
 		void setTime(int ttime) { time = ttime; }
 		int getTime() const { return time; }
-		bool operator== (const BuildItem & other) const { return action == other.action && target == other.target ; }		
+		bool operator== (const BuildItem & other) const { return action == other.action && target == other.target ; }	
+
+		//à utiliser quand une unité est chronoboosté
+		void chronoboostOn() { chronoboost = 1.5; }
+		void chronoboostOff() { chronoboost = 1.0; }
 	};
 
 	class BuildOrder {
