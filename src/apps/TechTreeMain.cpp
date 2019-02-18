@@ -17,6 +17,8 @@ int main(int argc, char **argv) {
     return -1;
   }
 
+  coordinator.SetTimeoutMS(3600000);
+
   auto path = coordinator.GetExePath();
   auto map = ".\\CeruleanFallLE.SC2Map";
 

@@ -9,6 +9,25 @@
 
 namespace suboo {
 
+/*
+auto filter_predicat = [](auto& abilityToUnit) {
+  return [&](const sc2::UnitTypeData &unitdesc){
+    return constunitdesc.available && unitdesc.race == sc2::Race::Protoss
+         &&!(unitdesc.name.find("Weapon") != std::string::npos ||
+             unitdesc.name.find("MP") != std::string::npos ||
+             unitdesc.name.find("SkinPreview") != std::string::npos ||
+             unitdesc.name.find("Interceptors") != std::string::npos
+         )
+         && (
+           abilityToUnit.empty()
+           || sc2util::IsBuilding(unitdesc.unit_type_id)
+           || (abilityToUnit.find((int)unitdesc.ability_id) !=
+abilityToUnit.end()
+           || unitdesc.name == "Mothership")
+         );}
+};
+*/
+
 TechTreeBot::TechTreeBot() {}
 
 TechTreeBot::~TechTreeBot() {}
@@ -66,6 +85,9 @@ void TechTreeBot::OnStep() {
   }
 
   for (const sc2::UnitTypeData &unitdesc : types) {
+    if (unitdesc.unit_type_id.to_string().find("PROTOS") == std::string::npos)
+      continue;
+
     TechTree::getTechTree().addUnit({
         unitdesc.unit_type_id,
         unitdesc.name,
@@ -74,10 +96,14 @@ void TechTreeBot::OnStep() {
         (int)unitdesc.food_required + (int)unitdesc.food_provided,
         unitToAbilities[unitdesc.unit_type_id],
         unitdesc.tech_requirement,
+        (int)((float)unitdesc.build_time / 22.4),
+        Unit::Status::TRAVELLING,
     });
   }
 
-  std::cout << TechTree::getTechTree() << std::endl;
+
+  //std::cout << TechTree::getTechTree() << std::endl;
+  std::cout << TechTree::getTechTree().serialize() << std::endl;
 }
 
 }  // namespace suboo

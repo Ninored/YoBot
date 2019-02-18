@@ -23,14 +23,13 @@ class Unit {
   int food_cost;     // Unit food costs (can be positive)
   std::vector<AbilityId> abilities;  // Abilities of the unit
 
-  UnitId builder;      // Unit required to build
   UnitId requirement;  // Tech requirement
 
   int production_time;  // Unit creation time
   int travel_time;      // Unit travel time
 
   enum Status { BUSY, TRAVELLING, CONSUMING };
-  Status acton_status;  // Unit action behavior
+  Status action_status;  // Unit action behavior
   
   // Operators
   std::size_t operator()(const Unit& k) const;
@@ -62,6 +61,7 @@ class TechTree {
   std::vector<Unit> units;
   std::vector<UnitId> index;
   std::unordered_map<int, Unit> map;
+  int version;
   TechTree();
 
  public:
@@ -70,6 +70,7 @@ class TechTree {
   const Unit& getUnit(UnitId) const;
   const std::unordered_map<int, Unit>& getMap() const { return map; };
   void addUnit(Unit u);
+  std::string serialize();
 };
 }  // namespace suboo
 

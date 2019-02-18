@@ -11,7 +11,9 @@ target_include_directories(TechTreeLib
     PRIVATE ./TechTree
     )
 set_property(TARGET TechTreeLib PROPERTY CXX_STANDARD 17)
-target_link_libraries(TechTreeLib ${s2lib_LIBRARIES})
+target_link_libraries(TechTreeLib 
+	PUBLIC ${s2lib_LIBRARIES}
+	PUBLIC nlohmann_json::nlohmann_json)
 
 
 
