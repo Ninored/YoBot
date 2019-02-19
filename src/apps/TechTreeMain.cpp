@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream>
 #include <regex>
+#include <nlohmann/json.hpp>
 #include "TechTree/TechTree.h"
 #include "TechTree/TechTreeBot.h"
 #include "sc2api/sc2_api.h"
@@ -17,8 +19,6 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  coordinator.SetTimeoutMS(3600000);
-
   auto path = coordinator.GetExePath();
   auto map = ".\\CeruleanFallLE.SC2Map";
 
@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
   coordinator.SetStepSize(1);
   coordinator.SetRealtime(false);
   coordinator.SetMultithreaded(true);
+
   coordinator.SetParticipants(
       {CreateParticipant(sc2::Race::Protoss, &bot),
        CreateComputer(sc2::Race::Protoss, sc2::Difficulty::CheatInsane)});
@@ -38,6 +39,11 @@ int main(int argc, char **argv) {
     std::cout << "Error while loading the map: " << map << std::endl;
   }
 
+  std::ofstream file;
+  file.open("techtree.json");
+  file << TechTree::getTechTree();
+  file.close();
+  
   std::cout << "TechTreeGenerator closing..." << std::endl;
   return 0;
 }

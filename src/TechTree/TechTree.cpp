@@ -8,7 +8,7 @@ namespace suboo {
 
 /* Class Unit */
 std::ostream& operator<<(std::ostream& os, const Unit& u) {
-  auto print_abilities = [](const std::vector<AbilityId>& abilities) {
+  /*auto print_abilities = [](const std::vector<AbilityId>& abilities) {
     std::string s = "";
     for (auto& a : abilities) {
       s += "[" + a.to_string();
@@ -16,8 +16,9 @@ std::ostream& operator<<(std::ostream& os, const Unit& u) {
     }
     return s;
   };
+  */
   os << "{" << std::endl
-     << "\t type: " << u.id << std::endl
+     << "\t type: " << sc2::UnitTypeToName(u.id) << std::endl
      << "\t name: " << u.name << std::endl
      << "\t mineral: " << u.mineral_cost << std::endl
      << "\t vespene: " << u.vespene_cost << std::endl
@@ -31,6 +32,9 @@ std::ostream& operator<<(std::ostream& os, const Unit& u) {
 }
 
 /* Serialization function used for json output */
+
+
+
 void to_json(json& j, const std::vector<AbilityId>& ab) { 
   for (auto& ability : ab) j.at("abilities").push_back((int)ability);
 }
@@ -51,6 +55,15 @@ void to_json(json& j, const Unit& unit) {
   j["requirement"] = (int)unit.requirement;
   j["action_status"] = unit.action_status;
 }
+
+void to_json(json& j, const std::unordered_map<int, Unit>& map) {
+	for (auto & i : map) {
+		json k;
+		to_json(k, i.second);
+		j.push_back(k);
+	}
+}
+
 
 void from_json(const json& j, Unit& u) {
   u.id = j.at("id").get<int>();
@@ -85,13 +98,8 @@ TechTree& TechTree::getTechTree() {
 void TechTree::addUnit(Unit u) { map.insert({u.id, u}); }
 const Unit& TechTree::getUnit(UnitId id) const { return map.find(id)->second; }
 
-std::string TechTree::serialize() { 
-  json j;
-  
-  j["version"] = version;
-  j["units"] = map;
-
-  return j;
+std::string TechTree::serialize() {
+	return "bjr";
 }
 
 }  // namespace suboo
