@@ -13,7 +13,9 @@ namespace suboo {
 		UnitId type;
 		std::string name;
 		int mineral_cost;
-		int vespene_cost;		
+		int vespene_cost;
+
+		int energy; //ne sert pour l'instant qu'au chronoboost
 
 		// provides/negative = needs
 		int food_provided;

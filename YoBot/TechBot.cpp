@@ -109,6 +109,7 @@ void suboo::TechBot::OnStep()
 		int maxunitID = 0;
 		// associations as pairs
 		std::vector<std::pair<int, int> > ind;
+		int energy = 50; //default energy
 		for (const sc2::UnitTypeData & unitdesc : types) {
 
 			if (isRelevant(unitdesc,abilityToUnit)) {
@@ -139,6 +140,7 @@ void suboo::TechBot::OnStep()
 							"	(UnitId)" << (int)techreq << ",  // tech requirement  " << std::endl <<
 							"	" << (int) ( (float) unitdesc.build_time / 22.4) << ", // build time" << std::endl << // 22.4 frames per game second
 							"	" << traveltime << ",   // travel time" << std::endl <<
+							"	" << "Energy : " << energy << ",   // energy" << std::endl <<
 							"	Unit::TRAVEL  // probe behavior" << std::endl <<
 							"}," << std::endl;
 					}
@@ -164,6 +166,7 @@ void suboo::TechBot::OnStep()
 							"	(UnitId)" << (int)unitdesc.tech_requirement << ", // tech requirement " << std::endl <<
 							"	" << (int)((float)unitdesc.build_time / 22.4) << ", // build time" << std::endl << // 22.4 frames per game second
 							"	" << 0 << ",   // travel time" << std::endl <<
+							"	" << "Energy : " << energy << ",   // energy" << std::endl <<
 							"	Unit::BUSY  // producer behavior" << std::endl <<
 							"}," << std::endl;
 					}
