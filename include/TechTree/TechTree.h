@@ -96,7 +96,8 @@ class TechTree {
       u.at("food_provided").get_to(unit.food_provided);
       unit.requirement = u.at("requirement").get<int>();
       u.at("action_status").get_to(unit.action_status);
-      for (auto ab : u.at("abilities").get<std::vector<int>>()) unit.abilities.push_back(ab);
+      for (auto ab : u.at("abilities").get<std::vector<int>>())
+        unit.abilities.push_back(ab);
 
       this->addUnit(unit);
     }
