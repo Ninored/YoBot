@@ -85,7 +85,8 @@ void TechTreeBot::OnStep() {
   }
 
   for (const sc2::UnitTypeData &unitdesc : types) {
-    if (unitdesc.unit_type_id.to_string().find("PROTOS") == std::string::npos)
+    // Filter unwanted units, we are focused on protos for the moment
+    if (std::string(sc2::UnitTypeToName(unitdesc.unit_type_id)) .compare(0, 6, "PROTOS") != 0)
       continue;
 
     TechTree::getTechTree().addUnit({
@@ -101,8 +102,7 @@ void TechTreeBot::OnStep() {
     });
   }
 
-
-  //std::cout << TechTree::getTechTree() << std::endl;
+  // std::cout << TechTree::getTechTree() << std::endl;
   std::cout << TechTree::getTechTree().serialize() << std::endl;
 }
 

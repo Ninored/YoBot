@@ -28,5 +28,5 @@ include_directories(${s2lib_INCLUDES})
 # Sub directories
 add_subdirectory(thirdparty)
 add_subdirectory(src)
-add_subdirectory(YoBot)
 add_subdirectory(test)
+add_subdirectory(YoBot)

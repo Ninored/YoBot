@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 	if (!coordinator.LoadSettings(argc, argv))
 	{
 		std::cout << "Unable to find or parse settings." << std::endl;
-		return 1;
+		return -1;
 	}
 	auto path = coordinator.GetExePath();
 	std::smatch matched;

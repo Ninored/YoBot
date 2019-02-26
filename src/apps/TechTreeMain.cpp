@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <regex>
 #include "TechTree/TechTree.h"
@@ -17,10 +18,21 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  coordinator.SetTimeoutMS(3600000);
-
   auto path = coordinator.GetExePath();
   auto map = ".\\CeruleanFallLE.SC2Map";
+
+  // Get version
+  std::smatch matched;
+  std::regex reg(R"(\bBase\d+\b)");
+  std::string version = "100000";
+  if (std::regex_search(path, matched, reg)) {
+    version = "";
+    for (size_t i = 4; i < matched.size(); i++) {
+      version += matched[i];
+    }
+  }
+  std::cout << "Version :" << version << std::endl;
+  TechTree::getTechTree().setVersion(version);
 
   TechTreeBot bot;
   coordinator.SetStepSize(1);
@@ -36,6 +48,14 @@ int main(int argc, char **argv) {
     coordinator.LeaveGame();
   } else {
     std::cout << "Error while loading the map: " << map << std::endl;
+  }
+
+  std::cout << "Writing json file..." << std::endl;
+  std::ofstream file;
+  file.open("./techtree_" + version + ".json", std::ios::out);
+  if (file.is_open()) {
+    file << TechTree::getTechTree().serialize();
+    file.close();
   }
 
   std::cout << "TechTreeGenerator closing..." << std::endl;

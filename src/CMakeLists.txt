@@ -8,7 +8,7 @@ target_include_directories(TechTreeLib
     PUBLIC ${PROJECT_SOURCE_DIR}/include 
     PUBLIC ${s2lib_INCLUDES}
 
-    PRIVATE ./TechTree
+    PUBLIC ./TechTree
     )
 set_property(TARGET TechTreeLib PROPERTY CXX_STANDARD 17)
 target_link_libraries(TechTreeLib 
