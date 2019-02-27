@@ -45,5 +45,7 @@ endforeach()
 # Sub directories
 add_subdirectory(thirdparty)
 add_subdirectory(src)
+
+enable_testing()
 add_subdirectory(test)
-add_subdirectory(YoBot)
+# add_subdirectory(YoBot)

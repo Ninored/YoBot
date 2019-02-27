@@ -7,4 +7,8 @@ include_directories(.)
 # Configure output directories
 add_executable("test-TechTree" ${TechTreeTests_SOURCES})
 target_link_libraries("test-TechTree" 
-	PRIVATE TechTreeLib )
+	PRIVATE TechTreeLib 
+)
+
+add_test( NAME TechTreeTests COMMAND "test-TechTree")
+
