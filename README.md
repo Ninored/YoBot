@@ -18,7 +18,7 @@ git clone --recursive https://github.com/Ninored/YoBot.git
 This project require `s2client-api`, please execute the following commands to build it:
 
 ```
-cd s2client-api
+cd thirdparty/s2client-api
 mkdir build
 cd build
 cmake -G "Visual Studio 15 2017 Win64" ../

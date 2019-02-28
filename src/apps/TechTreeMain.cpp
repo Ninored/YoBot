@@ -1,6 +1,8 @@
 #include <fstream>
 #include <iostream>
+#include <fstream>
 #include <regex>
+#include <nlohmann/json.hpp>
 #include "TechTree/TechTree.h"
 #include "TechTree/TechTreeBot.h"
 #include "sc2api/sc2_api.h"
@@ -38,6 +40,7 @@ int main(int argc, char **argv) {
   coordinator.SetStepSize(1);
   coordinator.SetRealtime(false);
   coordinator.SetMultithreaded(true);
+
   coordinator.SetParticipants(
       {CreateParticipant(sc2::Race::Protoss, &bot),
        CreateComputer(sc2::Race::Protoss, sc2::Difficulty::CheatInsane)});

@@ -1,0 +1,348 @@
+{
+	"units": [
+{
+	 type: PROTOSS_PYLON
+	 name: Pylon
+	 mineral: 100
+	 vespene: 0
+	 food: 8
+	 abilities: 
+},
+{
+	 type: PROTOSS_TEMPLARARCHIVE
+	 name: TemplarArchive
+	 mineral: 150
+	 vespene: 200
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_COLOSSUS
+	 name: Colossus
+	 mineral: 300
+	 vespene: 200
+	 food: 6
+	 abilities: 
+},
+{
+	 type: PROTOSS_STALKER
+	 name: Stalker
+	 mineral: 125
+	 vespene: 50
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_MOTHERSHIP
+	 name: Mothership
+	 mineral: 400
+	 vespene: 400
+	 food: 8
+	 abilities: 
+},
+{
+	 type: PROTOSS_NEXUS
+	 name: Nexus
+	 mineral: 400
+	 vespene: 0
+	 food: 15
+	 abilities: [3690][1006][3755][3686][1]
+},
+{
+	 type: PROTOSS_ASSIMILATOR
+	 name: Assimilator
+	 mineral: 75
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_GATEWAY
+	 name: Gateway
+	 mineral: 150
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_TEMPEST
+	 name: Tempest
+	 mineral: 250
+	 vespene: 175
+	 food: 5
+	 abilities: 
+},
+{
+	 type: PROTOSS_FORGE
+	 name: Forge
+	 mineral: 150
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_FLEETBEACON
+	 name: FleetBeacon
+	 mineral: 300
+	 vespene: 200
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_TWILIGHTCOUNCIL
+	 name: TwilightCouncil
+	 mineral: 150
+	 vespene: 100
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_PHOTONCANNON
+	 name: PhotonCannon
+	 mineral: 150
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_STARGATE
+	 name: Stargate
+	 mineral: 150
+	 vespene: 150
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_WARPGATE
+	 name: WarpGate
+	 mineral: 150
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_DARKSHRINE
+	 name: DarkShrine
+	 mineral: 150
+	 vespene: 150
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_ROBOTICSBAY
+	 name: RoboticsBay
+	 mineral: 150
+	 vespene: 150
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_ROBOTICSFACILITY
+	 name: RoboticsFacility
+	 mineral: 150
+	 vespene: 100
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_WARPPRISMPHASING
+	 name: WarpPrismPhasing
+	 mineral: 200
+	 vespene: 0
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_CYBERNETICSCORE
+	 name: CyberneticsCore
+	 mineral: 150
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_ZEALOT
+	 name: Zealot
+	 mineral: 100
+	 vespene: 0
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_DISRUPTORPHASED
+	 name: DisruptorPhased
+	 mineral: 0
+	 vespene: 0
+	 food: 3
+	 abilities: 
+},
+{
+	 type: PROTOSS_HIGHTEMPLAR
+	 name: HighTemplar
+	 mineral: 50
+	 vespene: 150
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_DARKTEMPLAR
+	 name: DarkTemplar
+	 mineral: 125
+	 vespene: 125
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_ARCHON
+	 name: Archon
+	 mineral: 175
+	 vespene: 275
+	 food: 4
+	 abilities: 
+},
+{
+	 type: PROTOSS_SENTRY
+	 name: Sentry
+	 mineral: 50
+	 vespene: 100
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_PHOENIX
+	 name: Phoenix
+	 mineral: 150
+	 vespene: 100
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_CARRIER
+	 name: Carrier
+	 mineral: 350
+	 vespene: 250
+	 food: 6
+	 abilities: 
+},
+{
+	 type: PROTOSS_ADEPTPHASESHIFT
+	 name: AdeptPhaseShift
+	 mineral: 0
+	 vespene: 0
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_VOIDRAY
+	 name: VoidRay
+	 mineral: 250
+	 vespene: 150
+	 food: 4
+	 abilities: 
+},
+{
+	 type: PROTOSS_WARPPRISM
+	 name: WarpPrism
+	 mineral: 200
+	 vespene: 0
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_OBSERVER
+	 name: Observer
+	 mineral: 25
+	 vespene: 75
+	 food: 1
+	 abilities: 
+},
+{
+	 type: PROTOSS_IMMORTAL
+	 name: Immortal
+	 mineral: 275
+	 vespene: 100
+	 food: 4
+	 abilities: 
+},
+{
+	 type: PROTOSS_PROBE
+	 name: Probe
+	 mineral: 50
+	 vespene: 0
+	 food: 1
+	 abilities: [3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1][3665][16][17][18][3674][3684][3666][880][881][882][883][884][1]
+},
+{
+	 type: PROTOSS_INTERCEPTOR
+	 name: Interceptor
+	 mineral: 15
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_ADEPT
+	 name: Adept
+	 mineral: 100
+	 vespene: 25
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_MOTHERSHIPCORE
+	 name: MothershipCore
+	 mineral: 100
+	 vespene: 100
+	 food: 2
+	 abilities: 
+},
+{
+	 type: PROTOSS_ORACLE
+	 name: Oracle
+	 mineral: 150
+	 vespene: 150
+	 food: 3
+	 abilities: 
+},
+{
+	 type: NEUTRAL_PROTOSSVESPENEGEYSER
+	 name: ProtossVespeneGeyser
+	 mineral: 0
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_DISRUPTOR
+	 name: Disruptor
+	 mineral: 150
+	 vespene: 150
+	 food: 3
+	 abilities: 
+},
+{
+	 type: PROTOSS_ORACLESTASISTRAP
+	 name: OracleStasisTrap
+	 mineral: 0
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+{
+	 type: PROTOSS_PYLONOVERCHARGED
+	 name: PylonOvercharged
+	 mineral: 100
+	 vespene: 0
+	 food: 8
+	 abilities: 
+},
+{
+	 type: PROTOSS_SHIELDBATTERY
+	 name: ShieldBattery
+	 mineral: 100
+	 vespene: 0
+	 food: 0
+	 abilities: 
+},
+	]
+}
