@@ -39,8 +39,8 @@ namespace suboo {
 		};
 		BuilderEffect effect;
 
-		Unit(int index, UnitId type, const std::string & name, int mineral_cost, int vespene_cost, int food_provided, UnitId builder, UnitId prereq, int production_time, int travel_time, BuilderEffect effect):
-			index(index),type(type),name(name), mineral_cost(mineral_cost), vespene_cost(vespene_cost),food_provided(food_provided),builder(builder),prereq(prereq),production_time(production_time),effect(effect) 
+		Unit(int index, UnitId type, const std::string & name, int mineral_cost, int vespene_cost, int energy, int food_provided, UnitId builder, UnitId prereq, int production_time, int travel_time, BuilderEffect effect):
+			index(index),type(type),name(name), mineral_cost(mineral_cost), vespene_cost(vespene_cost), energy(energy),food_provided(food_provided),builder(builder),prereq(prereq),production_time(production_time),effect(effect) 
 		{}
 	};
 
@@ -54,7 +54,8 @@ namespace suboo {
 		};
 		UnitId type;
 		UnitState state;
-		int time_to_free; // -1 means we stay in state (e.g. mining) until new orders come in
+		float time_to_free; // -1 means we stay in state (e.g. mining) until new orders come in
+		int time_with_chrono; //temps restant sous chronoboost
 		UnitInstance(UnitId type);
 		UnitInstance(UnitId type, UnitState state, int time_to_free) :type(type), state(state), time_to_free(time_to_free) {}
 		void print(std::ostream & out) const;
@@ -135,7 +136,7 @@ namespace suboo {
 		TRANSFER_VESPENE,
 		TRANSFER_MINERALS,
 		WAIT_GOAL,
-		//CHRONO
+		CHRONO
 	};
 
 	class BuildItem {

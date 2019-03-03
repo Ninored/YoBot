@@ -246,7 +246,13 @@ namespace suboo {
 				auto & u = *it;
 				bool erased = false;
 				if (u.time_to_free > 0) {
-					u.time_to_free--;
+					if (u.time_with_chrono > 0) {
+						u.time_to_free -= 1.5;
+						u.time_with_chrono--;
+					}
+					else {
+						u.time_to_free--;
+					}
 					if (u.time_to_free == 0) {
 						if (!sc2util::IsWorkerType(u.type)) {
 							u.state = u.FREE;	
