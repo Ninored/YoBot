@@ -23,9 +23,10 @@ class Unit {
   int mineral_cost;                  // Unit mineral costs
   int vespene_cost;                  // Unit vespene costs
   int food_provided;                 // Unit food costs (can be positive)
-  std::vector<AbilityId> abilities;  // Abilities of the unit
+  std::set<AbilityId> abilities;  // Abilities of the unit
 
-  UnitId requirement;  // Tech requirement
+  UnitId prereq;   // Tech requirement
+  UnitId builder;  // Builder Id
 
   int production_time;  // Unit creation time
   int travel_time;      // Unit travel time
@@ -42,13 +43,13 @@ class Unit {
  */
 class UnitInstance {
  public:
-  UnitId unittype;
+  UnitId type;
   enum UnitState { BUILDING, BUSY, MINING_MINERALS, MINING_VESPENE, FREE };
   UnitState state;
   int time_to_free;
-  UnitInstance(UnitId id) : unittype(id){};
+  UnitInstance(UnitId id) : type(id){};
   UnitInstance(UnitId id, UnitState state, int time)
-      : unittype(id), state(state), time_to_free(time){};
+      : type(id), state(state), time_to_free(time){};
 };
 
 /**
@@ -56,10 +57,12 @@ class UnitInstance {
  * It can be serialized and deserialized
  */
 class TechTree {
-  std::vector<Unit> units;
-  std::vector<UnitId> index;
   std::unordered_map<int, Unit> map;
+
   std::string version;
+  int initial_minerales;
+  int initial_vespene;
+  std::vector<UnitInstance> initial_unitinstances;
   TechTree() {}
 
  public:
@@ -76,6 +79,15 @@ class TechTree {
   void setVersion(std::string ver) { version = ver; }
   void addUnit(Unit u) { map.insert({u.id, u}); }
 
+  void setInitialState(std::vector<UnitInstance>& units, int i_minerales,
+    int i_vespene) {
+    initial_unitinstances.insert(std::begin(initial_unitinstances),
+                                 std::begin(units), std::end(units));
+
+    initial_minerales = i_minerales;
+    initial_vespene = i_vespene;
+  }
+
   void deserialize(std::string path) {
     std::ifstream file(path);
     if (file.fail()) {
@@ -85,7 +97,9 @@ class TechTree {
     nlohmann::json j;
     file >> j;
 
-    this->setVersion(j["version"]);
+    j.at("version").get_to(version);
+    j.at("initial_minerales").get_to(initial_minerales);
+    j.at("initial_vespene").get_to(initial_vespene);
 
     for (auto u : j["units"]) {
       Unit unit;
@@ -94,10 +108,11 @@ class TechTree {
       u.at("mineral_cost").get_to(unit.mineral_cost);
       u.at("vespene_cost").get_to(unit.vespene_cost);
       u.at("food_provided").get_to(unit.food_provided);
-      unit.requirement = u.at("requirement").get<int>();
+      u.at("production_time").get_to(unit.production_time);
+      unit.prereq = u.at("requirement").get<int>();
       u.at("action_status").get_to(unit.action_status);
       for (auto ab : u.at("abilities").get<std::vector<int>>())
-        unit.abilities.push_back(ab);
+        unit.abilities.insert(ab);
 
       this->addUnit(unit);
     }
@@ -108,6 +123,13 @@ class TechTree {
 
     // Version
     root["version"] = version;
+    root["initial_minerales"] = initial_minerales;
+    root["initial_vespene"] = initial_vespene;
+
+    nlohmann::json init_units;
+    for (auto& units : initial_unitinstances)
+      init_units.push_back((int)units.type);
+    root["initial_units"] = init_units;
 
     // Units
     for (auto entry : map) {
@@ -118,10 +140,12 @@ class TechTree {
       unit["mineral_cost"] = u.mineral_cost;
       unit["vespene_cost"] = u.vespene_cost;
       unit["food_provided"] = u.food_provided;
+      unit["production_time"] = u.production_time;
       nlohmann::json abilities;
       for (auto ab : u.abilities) abilities.push_back((int)ab);
       unit["abilities"] = abilities;
-      unit["requirement"] = (int)u.requirement;
+      unit["builder"] = (int)u.builder;
+      unit["requirement"] = (int)u.prereq;
       unit["action_status"] = u.action_status;
       root["units"] += unit;
     }
