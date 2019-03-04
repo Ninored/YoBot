@@ -247,7 +247,7 @@ namespace suboo {
 				bool erased = false;
 				if (u.time_to_free > 0) {
 					if (u.time_with_chrono > 0) {
-						u.time_to_free -= 1.5;
+						u.time_to_free -= 1.5; // val du chronoboost
 						u.time_with_chrono--;
 					}
 					else {

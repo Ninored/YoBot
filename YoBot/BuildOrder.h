@@ -38,9 +38,13 @@ namespace suboo {
 			CONSUME // producer takes a travel_time seconds BUSY, then build consumes the producer (e.g. zerg drone, move worker to/from gas action)
 		};
 		BuilderEffect effect;
-
-		Unit(int index, UnitId type, const std::string & name, int mineral_cost, int vespene_cost, int energy, int food_provided, UnitId builder, UnitId prereq, int production_time, int travel_time, BuilderEffect effect):
-			index(index),type(type),name(name), mineral_cost(mineral_cost), vespene_cost(vespene_cost), energy(energy),food_provided(food_provided),builder(builder),prereq(prereq),production_time(production_time),effect(effect) 
+		/*
+		Unit(int index, UnitId type, const std::string & name, int mineral_cost, int vespene_cost, int food_provided, UnitId builder, UnitId prereq, int production_time, int travel_time, BuilderEffect effect):
+			index(index),type(type),name(name), mineral_cost(mineral_cost), vespene_cost(vespene_cost), food_provided(food_provided),builder(builder),prereq(prereq),production_time(production_time),effect(effect) 
+		{}*/
+		
+		Unit(int index, UnitId type, const std::string & name, int mineral_cost, int vespene_cost, int energy, int food_provided, UnitId builder, UnitId prereq, int production_time, int travel_time, BuilderEffect effect) :
+			index(index), type(type), name(name), mineral_cost(mineral_cost), vespene_cost(vespene_cost), energy(energy), food_provided(food_provided), builder(builder), prereq(prereq), production_time(production_time), effect(effect)
 		{}
 	};
 
@@ -144,7 +148,7 @@ namespace suboo {
 		UnitId target;
 		int time;
 
-		float chronoboost;//vaut 1 ou 1.5, à multiplier par la vitesse d'une action ?
+		bool chronoboost;
 	public :		
 		int timeMin=0, timeVesp=0, timePre=0, timeFree=0, timeFood=0;
 		int totalWait() const  { return timeMin + timeVesp + timePre + timeFree + timeFood;}
@@ -165,8 +169,8 @@ namespace suboo {
 		bool operator== (const BuildItem & other) const { return action == other.action && target == other.target ; }	
 
 		//à utiliser quand une unité est chronoboosté
-		void chronoboostOn() { chronoboost = 1.5; }
-		void chronoboostOff() { chronoboost = 1.0; }
+		void chronoboostOn() { chronoboost = true; }
+		void chronoboostOff() { chronoboost = false; }
 	};
 
 	class BuildOrder {

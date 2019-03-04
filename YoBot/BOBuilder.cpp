@@ -157,7 +157,7 @@ namespace suboo {
 		timeBO(bo);
 		return bo;
 	}
-	/*
+	
 	BuildOrder BOBuilder::improveBO(const BuildOrder & bo, int depth)
 	{
 		std::vector<pboo> optimizers;
@@ -214,9 +214,9 @@ namespace suboo {
 		} while (gain > 0);
 
 		return best;
-	}*/
+	}
 
-
+	/*
 	//dans cette version, on ne se sert plus du fastoptimizer vu que la plupart de ses opérations ont déjà été traités
 	BuildOrder BOBuilder::improveBO(const BuildOrder & bo, int depth)
 	{
@@ -253,7 +253,7 @@ namespace suboo {
 		} while (gain > 0);
 
 		return best;
-	}
+	}*/
 
 	bool timeBO(BuildOrder & bo) {
 		auto & tech = TechTree::getTechTree();
@@ -304,6 +304,16 @@ namespace suboo {
 						gs.assignFreeUnit(u.builder, UnitInstance::BUSY, u.production_time);
 					}
 				}
+				/*
+				if (u.energy >=50) {
+					if (bi.timeFree > 20) {
+						bi.timeFree -= 10;
+					}
+					else {
+						bi.timeFree = 2 * bi.timeFree / 3;
+					}
+					u.energy -= 50;
+				}*/
 
 				
 				if (u.food_provided < 0 && gs.getAvailableSupply() < -u.food_provided) {

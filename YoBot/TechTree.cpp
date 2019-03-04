@@ -24,6 +24,7 @@ TechTree::TechTree() :
 	"Colossus", // name
 	300, // gold
 	200, // gas
+	50, //energy
 	-6,  // food
 	(UnitId)71,  // builder unit  
 	(UnitId)70, // tech requirement 
@@ -36,6 +37,7 @@ TechTree::TechTree() :
 	"Mothership", // name
 	400, // gold
 	400, // gas
+	50, //energy
 	-8,  // food
 	(UnitId)59,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -48,6 +50,7 @@ TechTree::TechTree() :
 	"Nexus", // name
 	400, // gold
 	0, // gas
+	  50, //energy
 	15,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)0,  // tech requirement  
@@ -60,6 +63,7 @@ TechTree::TechTree() :
 	"Pylon", // name
 	100, // gold
 	0, // gas
+	  50, //energy
 	8,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)0,  // tech requirement  
@@ -72,6 +76,7 @@ TechTree::TechTree() :
 	"Assimilator", // name
 	75, // gold
 	0, // gas
+	  50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)0,  // tech requirement  
@@ -84,6 +89,7 @@ TechTree::TechTree() :
 	"Gateway", // name
 	150, // gold
 	0, // gas
+	  50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)60,  // tech requirement  
@@ -96,6 +102,7 @@ TechTree::TechTree() :
 	"Forge", // name
 	150, // gold
 	0, // gas
+	  50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)59,  // tech requirement  
@@ -108,6 +115,7 @@ TechTree::TechTree() :
 	"FleetBeacon", // name
 	300, // gold
 	200, // gas
+	  50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)67,  // tech requirement  
@@ -120,6 +128,7 @@ TechTree::TechTree() :
 	"TwilightCouncil", // name
 	150, // gold
 	100, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)72,  // tech requirement  
@@ -132,6 +141,7 @@ TechTree::TechTree() :
 	"PhotonCannon", // name
 	150, // gold
 	0, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)63,  // tech requirement  
@@ -144,6 +154,7 @@ TechTree::TechTree() :
 	"Stargate", // name
 	150, // gold
 	150, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)72,  // tech requirement  
@@ -156,6 +167,7 @@ TechTree::TechTree() :
 	"TemplarArchive", // name
 	150, // gold
 	200, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)65,  // tech requirement  
@@ -168,6 +180,7 @@ TechTree::TechTree() :
 	"DarkShrine", // name
 	150, // gold
 	150, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)65,  // tech requirement  
@@ -180,6 +193,7 @@ TechTree::TechTree() :
 	"RoboticsBay", // name
 	150, // gold
 	150, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)71,  // tech requirement  
@@ -192,6 +206,7 @@ TechTree::TechTree() :
 	"RoboticsFacility", // name
 	200, // gold
 	100, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)72,  // tech requirement  
@@ -204,6 +219,7 @@ TechTree::TechTree() :
 	"CyberneticsCore", // name
 	150, // gold
 	0, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)62,  // tech requirement  
@@ -216,6 +232,7 @@ TechTree::TechTree() :
 	"Zealot", // name
 	100, // gold
 	0, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -228,6 +245,7 @@ TechTree::TechTree() :
 	"Stalker", // name
 	125, // gold
 	50, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)72, // tech requirement 
@@ -240,6 +258,7 @@ TechTree::TechTree() :
 	"HighTemplar", // name
 	50, // gold
 	150, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)68, // tech requirement 
@@ -252,6 +271,7 @@ TechTree::TechTree() :
 	"DarkTemplar", // name
 	125, // gold
 	125, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)69, // tech requirement 
@@ -264,6 +284,7 @@ TechTree::TechTree() :
 	"Sentry", // name
 	50, // gold
 	100, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)72, // tech requirement 
@@ -276,6 +297,7 @@ TechTree::TechTree() :
 	"Phoenix", // name
 	150, // gold
 	100, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)67,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -288,6 +310,7 @@ TechTree::TechTree() :
 	"Carrier", // name
 	350, // gold
 	250, // gas
+		50, //energy
 	-6,  // food
 	(UnitId)67,  // builder unit  
 	(UnitId)64, // tech requirement 
@@ -300,6 +323,7 @@ TechTree::TechTree() :
 	"VoidRay", // name
 	250, // gold
 	150, // gas
+		50, //energy
 	-4,  // food
 	(UnitId)67,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -312,6 +336,7 @@ TechTree::TechTree() :
 	"WarpPrism", // name
 	200, // gold
 	0, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)71,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -324,6 +349,7 @@ TechTree::TechTree() :
 	"Observer", // name
 	25, // gold
 	75, // gas
+		50, //energy
 	-1,  // food
 	(UnitId)71,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -336,6 +362,7 @@ TechTree::TechTree() :
 	"Immortal", // name
 	250, // gold
 	100, // gas
+		50, //energy
 	-4,  // food
 	(UnitId)71,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -348,6 +375,7 @@ TechTree::TechTree() :
 	"Probe", // name
 	50, // gold
 	0, // gas
+		50, //energy
 	-1,  // food
 	(UnitId)59,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -360,6 +388,7 @@ TechTree::TechTree() :
 	"WarpGate", // name
 	150, // gold
 	0, // gas
+		50, //energy
 	0,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)0,  // tech requirement  
@@ -372,6 +401,7 @@ TechTree::TechTree() :
 	"WarpPrismPhasing", // name
 	200, // gold
 	0, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)81,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -384,6 +414,7 @@ TechTree::TechTree() :
 	"Adept", // name
 	100, // gold
 	25, // gas
+		50, //energy
 	-2,  // food
 	(UnitId)62,  // builder unit  
 	(UnitId)72, // tech requirement 
@@ -396,6 +427,7 @@ TechTree::TechTree() :
 	"Oracle", // name
 	150, // gold
 	150, // gas
+		50, //energy
 	-3,  // food
 	(UnitId)67,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -408,6 +440,7 @@ TechTree::TechTree() :
 	"Tempest", // name
 	250, // gold
 	175, // gas
+		50, //energy
 	-5,  // food
 	(UnitId)67,  // builder unit  
 	(UnitId)64, // tech requirement 
@@ -420,6 +453,7 @@ TechTree::TechTree() :
 	"Disruptor", // name
 	150, // gold
 	150, // gas
+		50, //energy
 	-3,  // food
 	(UnitId)71,  // builder unit  
 	(UnitId)70, // tech requirement 
@@ -432,6 +466,7 @@ TechTree::TechTree() :
 	"OracleStasisTrap", // name
 	0, // gold
 	0, // gas
+		50, //energy
 	0,  // food
 	(UnitId)495,  // builder unit  
 	(UnitId)0, // tech requirement 
@@ -444,6 +479,7 @@ TechTree::TechTree() :
 	"ShieldBattery", // name
 	100, // gold
 	0, // gas
+		50, //energy
 	0,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)72,  // tech requirement  
@@ -456,6 +492,7 @@ TechTree::TechTree() :
 	"ObserverSiegeMode", // name
 	25, // gold
 	75, // gas
+		50, //energy
 	-1,  // food
 	(UnitId)82,  // builder unit  
 	(UnitId)0, // tech requirement 
