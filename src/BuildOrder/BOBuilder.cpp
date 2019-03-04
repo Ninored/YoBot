@@ -17,14 +17,6 @@ BuildOrder BOBuilder::makeBOFromGoal() {
         bo.addItem(target.first);
       }
     }
-    /*
-    for (int index = 0; index < tech.size(); index++) {
-      int qty = goal.getQty(index);
-      while (qty > 0) {
-        bo.addItem(tech.getUnitByIndex(index).type);
-        qty--;
-      }
-    }*/
   }
   return bo;
 }
@@ -251,8 +243,8 @@ bool timeBO(BuildOrder& bo) {
       }
       if ((int)u.prereq != 0 && !gs.hasFinishedUnit(u.prereq)) {
         if (!gs.waitforUnitCompletion(u.prereq)) {
-          std::cout << "Insufficient requirements missing tech req :"
-                    << tech.getUnit(u.prereq).name << std::endl;
+          //std::cout << "Insufficient requirements missing tech req :"
+          //          << tech.getUnit(u.prereq).name << std::endl;
           gs.print(std::cout);
           return false;
         }
@@ -261,8 +253,8 @@ bool timeBO(BuildOrder& bo) {
       if (u.builder != sc2::UNIT_TYPEID::INVALID) {
         if (!gs.hasFreeUnit(u.builder)) {
           if (!gs.waitforUnitFree(u.builder)) {
-            std::cout << "Insufficient requirements missing builder :"
-                      << tech.getUnit(u.builder).name << std::endl;
+           // std::cout << "Insufficient requirements missing builder :"
+           //           << tech.getUnit(u.builder).name << std::endl;
             gs.print(std::cout);
             return false;
           }

@@ -121,6 +121,7 @@ class TechTree {
       u.at("vespene_cost").get_to(unit.vespene_cost);
       u.at("food_provided").get_to(unit.food_provided);
       u.at("production_time").get_to(unit.production_time);
+      u.at("travel_time").get_to(unit.travel_time);
       unit.prereq = u.at("requirement").get<int>();
       u.at("action_status").get_to(unit.action_status);
       if (!u.at("abilities").is_null())
@@ -154,6 +155,7 @@ class TechTree {
       unit["vespene_cost"] = u.vespene_cost;
       unit["food_provided"] = u.food_provided;
       unit["production_time"] = u.production_time;
+      unit["travel_time"] = u.travel_time;
       nlohmann::json abilities;
       for (auto ab : u.abilities) abilities.push_back((int)ab);
       unit["abilities"] = abilities;

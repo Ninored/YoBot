@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
 
 	std::cout << "Final realizable :" << std::endl;
 	boopt.print(std::cout);
+
 	auto boopt2 = builder.improveBO(boopt, 5);
 	std::cout << "Final realizable :" << std::endl;
 	boopt2.print(std::cout);
