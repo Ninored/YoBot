@@ -129,7 +129,7 @@ std::pair<int, BuildOrder> LeftShifter::improve(const BuildOrder& base,
   // find any adjacent events with same timing
   auto& items = base.getItems();
   auto best = base;
-  GameState current = tech.getInitial();
+  GameState current{tech.getInitialUnits(), tech.getInitialMinerals(), tech.getInitialVespene()};
   for (int i = 0, e = items.size(); i < e; i++) {
     auto& bi = items[i];
     int skip = 0;
@@ -138,16 +138,16 @@ std::pair<int, BuildOrder> LeftShifter::improve(const BuildOrder& base,
       if (!(bj == bi)) {
         bool biprecedesbj = true;
         if (bi.getAction() == BUILD && bj.getAction() == BUILD) {
-          auto& ui = tech.getUnitById(bi.getTarget());
-          auto& uj = tech.getUnitById(bj.getTarget());
-          if (uj.prereq != ui.type &&
-              (uj.builder != ui.type || uj.builder == UnitId::PROTOSS_PROBE ||
+          auto& ui = tech.getUnit(bi.getTarget());
+          auto& uj = tech.getUnit(bj.getTarget());
+          if (uj.prereq != ui.id &&
+              (uj.builder != ui.id || uj.builder == sc2::UNIT_TYPEID::PROTOSS_PROBE ||
                current.hasFinishedUnit(uj.builder))) {
             biprecedesbj = false;
           }
         }
         if (bj.getAction() == TRANSFER_VESPENE && bi.getAction() == BUILD &&
-            bi.getTarget() == UnitId::PROTOSS_ASSIMILATOR) {
+            bi.getTarget() == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
         } else {
           if (bi.getAction() == BUILD && bj.getAction() != BUILD) {
             biprecedesbj = false;
@@ -184,12 +184,12 @@ std::pair<int, BuildOrder> LeftShifter::improve(const BuildOrder& base,
 
 std::pair<int, BuildOrder> AddVespeneGatherer::improve(const BuildOrder& base,
                                                        int depth) {
-  int nexi = base.getFinal().countUnit(UnitId::PROTOSS_NEXUS);
-  int ass = base.getFinal().countUnit(UnitId::PROTOSS_ASSIMILATOR);
+  int nexi = base.getFinal().countUnit(sc2::UNIT_TYPEID::PROTOSS_NEXUS);
+  int ass = base.getFinal().countUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
   if (2 * nexi > ass) {
     BuildOrder candidate = base;
     candidate.addItemFront(TRANSFER_VESPENE);
-    candidate.addItemFront(UnitId::PROTOSS_ASSIMILATOR);
+    candidate.addItemFront(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
     if (timeBO(candidate)) {
       int delta =
           base.getFinal().getTimeStamp() - candidate.getFinal().getTimeStamp();
@@ -223,17 +223,18 @@ std::pair<int, BuildOrder> AddMineralGatherer::improve(const BuildOrder& base,
     needpylon = true;
   }
   auto& tech = TechTree::getTechTree();
-  int available = tech.getInitial().getAvailableSupply();
+  GameState initial_state{tech.getInitialUnits(), tech.getInitialMinerals(), tech.getInitialVespene()};
+  int available = initial_state.getAvailableSupply();
   if (base.getFinal().probesToSaturation() > 0) {
     for (int i = 0, e = base.getItems().size(); i < e; i++) {
       if (available >= 1) {
         BuildOrder candidate = base;
-        candidate.insertItem(UnitId::PROTOSS_PROBE, i);
+        candidate.insertItem(sc2::UNIT_TYPEID::PROTOSS_PROBE, i);
         if (needpylon) {
           if (i <= 3) {
-            candidate.insertItem(UnitId::PROTOSS_PYLON, 0);
+            candidate.insertItem(sc2::UNIT_TYPEID::PROTOSS_PYLON, 0);
           } else {
-            candidate.insertItem(UnitId::PROTOSS_PYLON, i - 3);
+            candidate.insertItem(sc2::UNIT_TYPEID::PROTOSS_PYLON, i - 3);
           }
         }
         if (!BOBuilder::enforcePrereqBySwap(candidate)) {
@@ -246,7 +247,7 @@ std::pair<int, BuildOrder> AddMineralGatherer::improve(const BuildOrder& base,
         for (int j = i + 2; j < e; j++) {
           auto& act = candidate.getItems()[j];
           if (act.getAction() == BUILD &&
-              act.getTarget() == UnitId::PROTOSS_PYLON) {
+              act.getTarget() == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
             candidate.swapItems(j, j - 1);
             candidates.push_back(candidate);
             // candnames.push_back("Add Probe at index " + std::to_string(i) + "
@@ -255,7 +256,7 @@ std::pair<int, BuildOrder> AddMineralGatherer::improve(const BuildOrder& base,
         }
       }
       auto& bi = base.getItems()[i];
-      available += tech.getUnitById(bi.getTarget()).food_provided;
+      available += tech.getUnit(bi.getTarget()).food_provided;
     }
   }
   return findBest(base, candidates, candnames);
@@ -264,11 +265,11 @@ std::pair<int, BuildOrder> AddMineralGatherer::improve(const BuildOrder& base,
 std::pair<int, BuildOrder> AddProduction::improve(const BuildOrder& base,
                                                   int depth) {
   auto& tech = TechTree::getTechTree();
-  std::unordered_map<UnitId, int> used;
+  std::unordered_map<int, int> used;
   for (auto& bi : base.getItems()) {
     if (bi.getAction() == BUILD) {
-      auto& u = tech.getUnitById(bi.getTarget());
-      if (u.builder != UnitId::INVALID && !sc2util::IsWorkerType(u.builder)) {
+      auto& u = tech.getUnit(bi.getTarget());
+      if (u.builder != sc2::UNIT_TYPEID::INVALID && !sc2util::IsWorkerType(u.builder)) {
         auto it = used.find(u.builder);
         if (it == used.end()) {
           used[u.builder] = 1;
@@ -283,7 +284,7 @@ std::pair<int, BuildOrder> AddProduction::improve(const BuildOrder& base,
   std::vector<std::string> candnames;
   for (auto& pair : used) {
     if (pair.second > base.getFinal().countUnit(pair.first)) {
-      auto& builder = tech.getUnitById(pair.first);
+      auto& builder = tech.getUnit(pair.first);
       // try to stutter
       int index = 0;
       bool ok = false;
@@ -311,14 +312,14 @@ std::pair<int, BuildOrder> NoWaitShifter::improve(const BuildOrder& base,
   candidates.reserve(20);
   // find any event with zero wait : left shift it
   auto& items = base.getItems();
-  GameState current = tech.getInitial();
+  GameState current{tech.getInitialUnits(), tech.getInitialMinerals(), tech.getInitialVespene()};
   for (int i = 1, e = items.size(); i < e; i++) {
     auto& bi = items[i];
     if (bi == items[i - 1]) {
       continue;
     }
     if (bi.getAction() == TRANSFER_VESPENE &&
-        items[i - 1].getTarget() == UnitId::PROTOSS_ASSIMILATOR) {
+        items[i - 1].getTarget() == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
       // causes build to be broken
       continue;
     }
@@ -363,7 +364,7 @@ std::pair<int, BuildOrder> AddMineralGathererStack::improve(
     auto copy = base;
     int i = 0, tobuild = base.getFinal().probesToSaturation();
     for (; i < tobuild && i < 3; i++) {
-      copy.addItemFront(UnitId::PROTOSS_PROBE);
+      copy.addItemFront(sc2::UNIT_TYPEID::PROTOSS_PROBE);
     }
     copy = BOBuilder::enforcePrereq(copy);
     if (timeBO(copy)) {
@@ -383,8 +384,8 @@ std::pair<int, BuildOrder> AddProductionForceful::improve(
   for (auto& bi : base.getItems()) {
     if (bi.getAction() == BUILD) {
       if (bi.timeFree > 0) {
-        auto& unit = tech.getUnitById(bi.getTarget());
-        if (unit.builder != UnitId::INVALID) {
+        auto& unit = tech.getUnit(bi.getTarget());
+        if (unit.builder != sc2::UNIT_TYPEID::INVALID) {
           waitFor[unit.builder] += bi.timeFree;
         }
       }
@@ -417,7 +418,7 @@ std::pair<int, BuildOrder> RemoveExtra::improve(const BuildOrder& base,
   std::vector<BuildOrder> candidates;
   std::vector<std::string> candindexes;
   int foodPer =
-      TechTree::getTechTree().getUnitById(UnitId::PROTOSS_PYLON).food_provided;
+      TechTree::getTechTree().getUnit(sc2::UNIT_TYPEID::PROTOSS_PYLON).food_provided;
   if (base.getFinal().getAvailableSupply() > foodPer) {
     auto bo = base;
     // find last pylon
@@ -425,7 +426,7 @@ std::pair<int, BuildOrder> RemoveExtra::improve(const BuildOrder& base,
               e = bo.getItems().begin();
          it != e; --it) {
       if (it->getAction() == BUILD &&
-          it->getTarget() == UnitId::PROTOSS_PYLON) {
+          it->getTarget() == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
         bo.getItems().erase(it);
         break;
       }

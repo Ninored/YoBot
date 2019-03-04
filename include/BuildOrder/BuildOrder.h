@@ -2,76 +2,11 @@
 
 #include <string>
 #include <vector>
+#include "TechTree/TechTree.h"
 #include "sc2api/sc2_unit.h"
 
 namespace suboo {
 
-using UnitId = sc2::UNIT_TYPEID;
-
-struct Unit {
-  int index;
-  UnitId type;
-  std::string name;
-  int mineral_cost;
-  int vespene_cost;
-
-  // provides/negative = needs
-  int food_provided;
-
-  // building/unit producing the unit
-  UnitId builder;
-
-  // prerequisites
-  UnitId prereq;
-
-  // time to produce the unit
-  int production_time;
-
-  // estimated time to/from construction site or 0
-  int travel_time;
-
-  enum BuilderEffect {
-    BUSY,    // producer is busy during the full given production time (e.g.
-             // terran scv, production building)
-    TRAVEL,  // producer gets a travel_time second BUSY downtime (travel
-             // time/cast time) only (e.g. toss probe, larvae spawn)
-    CONSUME  // producer takes a travel_time seconds BUSY, then build consumes
-             // the producer (e.g. zerg drone, move worker to/from gas action)
-  };
-  BuilderEffect effect;
-
-  Unit(int index, UnitId type, const std::string& name, int mineral_cost,
-       int vespene_cost, int food_provided, UnitId builder, UnitId prereq,
-       int production_time, int travel_time, BuilderEffect effect)
-      : index(index),
-        type(type),
-        name(name),
-        mineral_cost(mineral_cost),
-        vespene_cost(vespene_cost),
-        food_provided(food_provided),
-        builder(builder),
-        prereq(prereq),
-        production_time(production_time),
-        effect(effect) {}
-};
-
-struct UnitInstance {
-  enum UnitState {
-    BUILDING,  // being built
-    BUSY,      // building something, traveling somewhere
-    MINING_VESPENE,
-    MINING_MINERALS,
-    FREE  // true for combat units all the time
-  };
-  UnitId type;
-  UnitState state;
-  int time_to_free;  // -1 means we stay in state (e.g. mining) until new orders
-                     // come in
-  UnitInstance(UnitId type);
-  UnitInstance(UnitId type, UnitState state, int time_to_free)
-      : type(type), state(state), time_to_free(time_to_free) {}
-  void print(std::ostream& out) const;
-};
 std::string to_string(const UnitInstance::UnitState& state);
 class GameState {
   std::vector<UnitInstance> freeUnits;
@@ -95,6 +30,7 @@ class GameState {
         vps(-1.0),
         timestamp(0),
         supply(-1) {}
+
   const std::vector<UnitInstance>& getFreeUnits() const { return freeUnits; }
   const std::vector<UnitInstance>& getAttackUnits() const {
     return attackUnits;
@@ -182,7 +118,7 @@ class BuildItem {
 
   BuildItem(UnitId id) : action(BUILD), target(id), time(0) {}
   BuildItem(BuildAction action)
-      : action(action), target(UnitId::INVALID), time(0) {}
+      : action(action), target(sc2::UNIT_TYPEID::INVALID), time(0) {}
 
   BuildAction getAction() const { return action; }
   UnitId getTarget() const { return target; }
@@ -191,6 +127,7 @@ class BuildItem {
   bool operator==(const BuildItem& other) const {
     return action == other.action && target == other.target;
   }
+  bool operator==(const UnitId& other) const { return other == target; }
 };
 
 class BuildOrder {

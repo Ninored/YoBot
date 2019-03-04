@@ -4,6 +4,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
+#include <iostream>
 #include <vector>
 #include "sc2api/sc2_data.h"
 #include "sc2api/sc2_unit.h"
@@ -47,6 +48,7 @@ class UnitInstance {
   enum UnitState { BUILDING, BUSY, MINING_MINERALS, MINING_VESPENE, FREE };
   UnitState state;
   int time_to_free;
+  void print(std::ostream& out) const;
   UnitInstance(UnitId id) : type(id){};
   UnitInstance(UnitId id, UnitState state, int time)
       : type(id), state(state), time_to_free(time){};
@@ -74,6 +76,11 @@ class TechTree {
   const Unit& getUnit(UnitId id) const { return map.find(id)->second; }
   const std::string getVersion() const { return version; }
   const std::unordered_map<int, Unit>& getMap() const { return map; }
+  const std::vector<UnitInstance> getInitialUnits() const {
+    return initial_unitinstances;
+  }
+  const int getInitialMinerals() const { return initial_minerales; }
+  const int getInitialVespene() const { return initial_vespene; }
 
   void clear() { map.clear(); }
   void setVersion(std::string ver) { version = ver; }

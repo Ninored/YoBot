@@ -12,17 +12,21 @@ using namespace suboo;
 
 int main(int argc, char* argv[])
 {
+  // Loading techtree
+  TechTree::getTechTree().deserialize("techtree_.json");
+
+
 	BOBuilder builder;
 
 	BuildGoal goal(0); // ASAP
-	goal.addUnit(UnitId::PROTOSS_IMMORTAL, 1);
+	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL, 1);
 	//goal.addUnit(UnitId::PROTOSS_DISRUPTOR, 1);
-	goal.addUnit(UnitId::PROTOSS_CARRIER, 1);
+	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_CARRIER, 1);
 	//goal.addUnit(UnitId::PROTOSS_GATEWAY, 3);
 	//goal.addUnit(UnitId::PROTOSS_STARGATE, 3);
-	goal.addUnit(UnitId::PROTOSS_OBSERVER, 1);
-	goal.addUnit(UnitId::PROTOSS_PHOENIX, 3);
-	goal.addUnit(UnitId::PROTOSS_ZEALOT, 10); //goal.addUnit(UnitId::PROTOSS_NEXUS, 1);
+	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_OBSERVER, 1);
+	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_PHOENIX, 3);
+	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_ZEALOT, 10); //goal.addUnit(UnitId::PROTOSS_NEXUS, 1);
 
 	builder.addGoal(goal);
 	goal.print(std::cout);
@@ -40,53 +44,53 @@ int main(int argc, char* argv[])
 
 	if (true) {
 		BuildOrder bo;
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_GATEWAY);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_GATEWAY);
-		bo.addItem(UnitId::PROTOSS_CYBERNETICSCORE);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_ASSIMILATOR);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_GATEWAY);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_GATEWAY);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
 		bo.addItem(TRANSFER_VESPENE);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_PROBE);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_STARGATE);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PHOENIX);
-		bo.addItem(UnitId::PROTOSS_ASSIMILATOR);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_STARGATE);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PHOENIX);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
 		bo.addItem(TRANSFER_VESPENE);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_PHOENIX);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_PHOENIX);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_ROBOTICSFACILITY);
-		bo.addItem(UnitId::PROTOSS_ZEALOT);
-		bo.addItem(UnitId::PROTOSS_FLEETBEACON);
-		bo.addItem(UnitId::PROTOSS_PYLON);
-		bo.addItem(UnitId::PROTOSS_OBSERVER);
-		bo.addItem(UnitId::PROTOSS_IMMORTAL);
-		bo.addItem(UnitId::PROTOSS_CARRIER);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PHOENIX);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PHOENIX);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ROBOTICSFACILITY);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_FLEETBEACON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_OBSERVER);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL);
+		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_CARRIER);
 		if (!timeBO(bo)) {
 			auto boe = BOBuilder::enforcePrereq(bo);
 			timeBO(boe);
