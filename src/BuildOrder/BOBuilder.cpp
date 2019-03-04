@@ -11,10 +11,10 @@ BuildOrder BOBuilder::makeBOFromGoal() {
   BuildOrder bo;
   // make the basic thing : list of creation order of each desired units x qty
   for (auto& goal : goals) {
-    for (auto& t : tech) {
-      int qty = goal.getQty(t.first);
+    for (auto& target : goal.getMap()) {
+      int qty = target.second;
       while (qty-- > 0) {
-        bo.addItem(t.second.id);
+        bo.addItem(target.first);
       }
     }
     /*

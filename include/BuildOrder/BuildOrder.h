@@ -168,6 +168,7 @@ class BuildGoal {
   void addUnit(UnitId id, int qty);
   void print(std::ostream& out) const;
   int getQty(int id) const { return desiredPerUnit.find(id)->second; }
+  std::unordered_map<int, int> getMap() const { return desiredPerUnit; }
 };
 
 }  // namespace suboo

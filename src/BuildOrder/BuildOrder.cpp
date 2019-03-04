@@ -17,9 +17,8 @@ void BuildGoal::addUnit(UnitId id, int qty) {
 void BuildGoal::print(std::ostream &out) const {
   auto &tech = TechTree::getTechTree().getMap();
   out << "Goal time=" << framesToCompletion << std::endl;
-  for (auto &it : tech) {
-    int qty = desiredPerUnit.find(it.first)->second;
-    out << qty << " x " << it.second.name << std::endl;
+  for (auto &it : desiredPerUnit) {
+    out << it.second << " x " << tech.find(it.first)->second.name << std::endl;
   }
 }
 /*

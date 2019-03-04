@@ -2,9 +2,9 @@
 #define TECHTREE_H
 
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
-#include <iostream>
 #include <vector>
 #include "sc2api/sc2_data.h"
 #include "sc2api/sc2_unit.h"
@@ -19,11 +19,11 @@ using AbilityId = sc2::AbilityID;  // AbilityId using
  */
 class Unit {
  public:
-  UnitId id;                         // Unit id
-  std::string name;                  // Unit name
-  int mineral_cost;                  // Unit mineral costs
-  int vespene_cost;                  // Unit vespene costs
-  int food_provided;                 // Unit food costs (can be positive)
+  UnitId id;                      // Unit id
+  std::string name;               // Unit name
+  int mineral_cost;               // Unit mineral costs
+  int vespene_cost;               // Unit vespene costs
+  int food_provided;              // Unit food costs (can be positive)
   std::set<AbilityId> abilities;  // Abilities of the unit
 
   UnitId prereq;   // Tech requirement
@@ -87,7 +87,7 @@ class TechTree {
   void addUnit(Unit u) { map.insert({u.id, u}); }
 
   void setInitialState(std::vector<UnitInstance>& units, int i_minerales,
-    int i_vespene) {
+                       int i_vespene) {
     initial_unitinstances.insert(std::begin(initial_unitinstances),
                                  std::begin(units), std::end(units));
 
@@ -108,6 +108,11 @@ class TechTree {
     j.at("initial_minerales").get_to(initial_minerales);
     j.at("initial_vespene").get_to(initial_vespene);
 
+    nlohmann::json i_units = j.at("initial_units");
+    if (!i_units.is_null())
+      for (auto u : i_units.get<std::vector<int>>())
+        initial_unitinstances.emplace_back(UnitInstance(u));
+
     for (auto u : j["units"]) {
       Unit unit;
       unit.id = u.at("id").get<int>();
@@ -118,8 +123,9 @@ class TechTree {
       u.at("production_time").get_to(unit.production_time);
       unit.prereq = u.at("requirement").get<int>();
       u.at("action_status").get_to(unit.action_status);
-      for (auto ab : u.at("abilities").get<std::vector<int>>())
-        unit.abilities.insert(ab);
+      if (!u.at("abilities").is_null())
+        for (auto ab : u.at("abilities").get<std::vector<int>>())
+          unit.abilities.insert(ab);
 
       this->addUnit(unit);
     }

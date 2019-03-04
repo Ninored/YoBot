@@ -21,12 +21,12 @@ int main(int argc, char* argv[])
 	BuildGoal goal(0); // ASAP
 	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL, 1);
 	//goal.addUnit(UnitId::PROTOSS_DISRUPTOR, 1);
-	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_CARRIER, 1);
+  //goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_CARRIER, 0);
 	//goal.addUnit(UnitId::PROTOSS_GATEWAY, 3);
 	//goal.addUnit(UnitId::PROTOSS_STARGATE, 3);
-	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_OBSERVER, 1);
-	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_PHOENIX, 3);
-	goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_ZEALOT, 10); //goal.addUnit(UnitId::PROTOSS_NEXUS, 1);
+	//goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_OBSERVER, 0);
+	//goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_PHOENIX, 0);
+	//goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_ZEALOT, 00); //goal.addUnit(UnitId::PROTOSS_NEXUS, 1);
 
 	builder.addGoal(goal);
 	goal.print(std::cout);
