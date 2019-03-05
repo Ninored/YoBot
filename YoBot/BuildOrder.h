@@ -179,6 +179,8 @@ namespace suboo {
 		
 		GameState final;				
 	public :
+		BuildOrder(){}
+		BuildOrder(GameState gsi, GameState gsf) : initial(gsi), final(gsf) {}
 		void print(std::ostream & out);
 		template<typename T> 
 		void addItem(T tocreate)

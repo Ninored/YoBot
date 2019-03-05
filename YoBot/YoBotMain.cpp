@@ -5,7 +5,7 @@
 #include "sc2utils/sc2_arg_parser.h"
 #include "LadderInterface.h"
 
-#define _GENTECHTREE 1
+//#define _GENTECHTREE 1
 //#define _BOSEARCH 1
 //#define _SELFPLAY 1
 //#define _RELEASE 1
