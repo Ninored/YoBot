@@ -164,6 +164,7 @@ namespace suboo {
 
 		BuildAction getAction() const { return action; }
 		UnitId getTarget() const { return target; }
+		void setTarget(UnitId ui) { target = ui; }
 		void setTime(int ttime) { time = ttime; }
 		int getTime() const { return time; }
 		bool operator== (const BuildItem & other) const { return action == other.action && target == other.target ; }	

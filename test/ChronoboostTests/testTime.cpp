@@ -41,6 +41,37 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		std::cout << "Initial realizable :" << std::endl;
 		bo.print(std::cout);
 
+		auto boopt = builder.improveBO(bo, 2);
+
+		std::cout << "Final realizable :" << std::endl;
+		boopt.print(std::cout);
+		auto boopt2 = builder.improveBO(boopt, 5);
+		std::cout << "Final realizable :" << std::endl;
+		boopt2.print(std::cout);
+
+
+		//version avec chronoboost
+		BuildOrder bo2 = builder.computeBO();
+
+		BuildItem bi(BuildAction::CHRONO);
+		bi.setTarget(UnitId::PROTOSS_PROBE);
+		bo2.addItem(bi);
+
+		timeBO(bo2);
+
+		std::cout << "Initial realizable :" << std::endl;
+		bo.print(std::cout);
+
+		auto bo2opt = builder.improveBO(bo2, 2);
+
+		std::cout << "Final realizable :" << std::endl;
+		bo2opt.print(std::cout);
+		auto bo2opt2 = builder.improveBO(bo2opt, 5);
+		std::cout << "Final realizable :" << std::endl;
+		bo2opt2.print(std::cout);
+
+
+
 		//int time = gsf.getTimeStamp();
 		//std::cout << time << std::endl;
 
