@@ -198,6 +198,7 @@ namespace suboo {
 		{
 			items.insert(items.begin() + index, BuildItem(tocreate));
 		}
+		GameState getInitial() { return initial; }
 		const std::deque<BuildItem> & getItems() const { return items; }
 		std::deque<BuildItem> & getItems() { return items; }
 		GameState & getFinal() { return final; }

@@ -35,19 +35,15 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		goal.print(std::cout);
 
 		BuildOrder bo = builder.computeBO();
+		bo.getInitial().addUnit(UnitId::PROTOSS_NEXUS);
 
 		timeBO(bo);
 
 		std::cout << "Initial realizable :" << std::endl;
 		bo.print(std::cout);
 
-		auto boopt = builder.improveBO(bo, 2);
+		auto t1 = bo.getFinal.getTimeStamp();
 
-		std::cout << "Final realizable :" << std::endl;
-		boopt.print(std::cout);
-		auto boopt2 = builder.improveBO(boopt, 5);
-		std::cout << "Final realizable :" << std::endl;
-		boopt2.print(std::cout);
 
 
 		//version avec chronoboost
@@ -62,14 +58,9 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		std::cout << "Initial realizable :" << std::endl;
 		bo.print(std::cout);
 
-		auto bo2opt = builder.improveBO(bo2, 2);
+		auto t2 = bo2.getFinal.getTimeStamp();
 
-		std::cout << "Final realizable :" << std::endl;
-		bo2opt.print(std::cout);
-		auto bo2opt2 = builder.improveBO(bo2opt, 5);
-		std::cout << "Final realizable :" << std::endl;
-		bo2opt2.print(std::cout);
-
+		REQUIRE(t2 < t1);
 
 
 		//int time = gsf.getTimeStamp();
@@ -77,8 +68,6 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 
 		//REQUIRE(bo == bo);
 		//REQUIRE(std::equal(bo, bo));
-
-		REQUIRE(1 == 1);
 
 	}
 }
