@@ -20,18 +20,19 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  auto path = coordinator.GetExePath();
+  auto path(coordinator.GetExePath());
   auto map = ".\\CeruleanFallLE.SC2Map";
+
+  std::cout << "Path: " << path << std::endl;
+
 
   // Get version
   std::smatch matched;
-  std::regex reg(R"(\bBase\d+\b)");
-  std::string version = "100000";
+  std::regex reg("[0-9]{5}");
+  std::string version = "00000";
+
   if (std::regex_search(path, matched, reg)) {
-    version = "";
-    for (size_t i = 4; i < matched.size(); i++) {
-      version += matched[i];
-    }
+    version = matched[matched.size() - 1];
   }
   std::cout << "Version :" << version << std::endl;
   TechTree::getTechTree().setVersion(version);

@@ -44,14 +44,26 @@ class Unit {
  */
 class UnitInstance {
  public:
-  UnitId type;
   enum UnitState { BUILDING, BUSY, MINING_MINERALS, MINING_VESPENE, FREE };
+  UnitId type;
   UnitState state;
   int time_to_free;
-  void print(std::ostream& out) const;
-  UnitInstance(UnitId id) : type(id){};
+
+  UnitInstance(UnitId id) : type(id), state(MINING_MINERALS), time_to_free(0){};
   UnitInstance(UnitId id, UnitState state, int time)
       : type(id), state(state), time_to_free(time){};
+
+  void print(std::ostream& out) const;
+  std::string print_status() const {
+    switch (state) {
+      case suboo::UnitInstance::BUILDING: return "B";
+      case suboo::UnitInstance::BUSY: return "C";
+      case suboo::UnitInstance::MINING_MINERALS: return "M";
+      case suboo::UnitInstance::MINING_VESPENE: return "V";
+      case suboo::UnitInstance::FREE: return "F";
+      default : return "-" ;
+    }
+  }
 };
 
 /**
@@ -73,7 +85,13 @@ class TechTree {
     return tree;
   }
 
-  const Unit& getUnit(UnitId id) const { return map.find(id)->second; }
+  const Unit& getUnit(UnitId id) const {
+    auto& u = map.find(id);
+    if (u == map.end())
+      throw std::out_of_range("Cannot find unit id: " + (int)id);
+
+    return map.find(id)->second;
+  }
   const std::string getVersion() const { return version; }
   const std::unordered_map<int, Unit>& getMap() const { return map; }
   const std::vector<UnitInstance> getInitialUnits() const {

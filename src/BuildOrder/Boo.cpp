@@ -4,6 +4,7 @@
 #include <sstream>
 #include "BuildOrder/BOBuilder.h"
 #include "BuildOrder/UnitTypes.h"
+#include "BuildOrder/BuildItem.h"
 
 namespace suboo {
 
@@ -137,7 +138,7 @@ std::pair<int, BuildOrder> LeftShifter::improve(const BuildOrder& base,
       auto& bj = items[j];
       if (!(bj == bi)) {
         bool biprecedesbj = true;
-        if (bi.getAction() == BUILD && bj.getAction() == BUILD) {
+        if (bi.getAction() == BuildItem::BUILD && bj.getAction() == BuildItem::BUILD) {
           auto& ui = tech.getUnit(bi.getTarget());
           auto& uj = tech.getUnit(bj.getTarget());
           if (uj.prereq != ui.id &&
@@ -146,10 +147,10 @@ std::pair<int, BuildOrder> LeftShifter::improve(const BuildOrder& base,
             biprecedesbj = false;
           }
         }
-        if (bj.getAction() == TRANSFER_VESPENE && bi.getAction() == BUILD &&
+        if (bj.getAction() == BuildItem::TRANSFER_VESPENE && bi.getAction() == BuildItem::BUILD &&
             bi.getTarget() == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
         } else {
-          if (bi.getAction() == BUILD && bj.getAction() != BUILD) {
+          if (bi.getAction() == BuildItem::BUILD && bj.getAction() != BuildItem::BUILD) {
             biprecedesbj = false;
           }
         }
@@ -174,7 +175,7 @@ std::pair<int, BuildOrder> LeftShifter::improve(const BuildOrder& base,
         // skip++;
       }
     }
-    if (bi.getAction() == BUILD) {
+    if (bi.getAction() == BuildItem::BUILD) {
       current.addUnit(bi.getTarget());
     }
     i += skip;
@@ -188,7 +189,7 @@ std::pair<int, BuildOrder> AddVespeneGatherer::improve(const BuildOrder& base,
   int ass = base.getFinal().countUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
   if (2 * nexi > ass) {
     BuildOrder candidate = base;
-    candidate.addItemFront(TRANSFER_VESPENE);
+    candidate.addItemFront(BuildItem::TRANSFER_VESPENE);
     candidate.addItemFront(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
     if (timeBO(candidate)) {
       int delta =
@@ -246,7 +247,7 @@ std::pair<int, BuildOrder> AddMineralGatherer::improve(const BuildOrder& base,
         // find the next pylons and bring them forward one
         for (int j = i + 2; j < e; j++) {
           auto& act = candidate.getItems()[j];
-          if (act.getAction() == BUILD &&
+          if (act.getAction() == BuildItem::BUILD &&
               act.getTarget() == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
             candidate.swapItems(j, j - 1);
             candidates.push_back(candidate);
@@ -255,8 +256,10 @@ std::pair<int, BuildOrder> AddMineralGatherer::improve(const BuildOrder& base,
           }
         }
       }
+
       auto& bi = base.getItems()[i];
-      available += tech.getUnit(bi.getTarget()).food_provided;
+      if (bi.getTarget() != 0)
+        available += tech.getUnit(bi.getTarget()).food_provided;
     }
   }
   return findBest(base, candidates, candnames);
@@ -267,7 +270,7 @@ std::pair<int, BuildOrder> AddProduction::improve(const BuildOrder& base,
   auto& tech = TechTree::getTechTree();
   std::unordered_map<int, int> used;
   for (auto& bi : base.getItems()) {
-    if (bi.getAction() == BUILD) {
+    if (bi.getAction() == BuildItem::BUILD) {
       auto& u = tech.getUnit(bi.getTarget());
       if (u.builder != sc2::UNIT_TYPEID::INVALID && !sc2util::IsWorkerType(u.builder)) {
         auto it = used.find(u.builder);
@@ -289,7 +292,7 @@ std::pair<int, BuildOrder> AddProduction::improve(const BuildOrder& base,
       int index = 0;
       bool ok = false;
       for (auto& bi : base.getItems()) {
-        if (ok || bi.getAction() == BUILD && bi.getTarget() == pair.first) {
+        if (ok || bi.getAction() == BuildItem::BUILD && bi.getTarget() == pair.first) {
           auto candidate = base;
           candidate.insertItem(pair.first, index);
           candidates.push_back(candidate);
@@ -318,7 +321,7 @@ std::pair<int, BuildOrder> NoWaitShifter::improve(const BuildOrder& base,
     if (bi == items[i - 1]) {
       continue;
     }
-    if (bi.getAction() == TRANSFER_VESPENE &&
+    if (bi.getAction() == BuildItem::TRANSFER_VESPENE &&
         items[i - 1].getTarget() == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
       // causes build to be broken
       continue;
@@ -358,6 +361,7 @@ std::pair<int, BuildOrder> NoWaitShifter::improve(const BuildOrder& base,
   }
   return findBest(base, candidates, candindexes);
 }
+
 std::pair<int, BuildOrder> AddMineralGathererStack::improve(
     const BuildOrder& base, int depth) {
   if (base.getFinal().probesToSaturation() > 0) {
@@ -376,13 +380,14 @@ std::pair<int, BuildOrder> AddMineralGathererStack::improve(
   }
   return std::pair<int, BuildOrder>(0, BuildOrder());
 }
+
 std::pair<int, BuildOrder> AddProductionForceful::improve(
     const BuildOrder& base, int depth) {
   auto& tech = TechTree::getTechTree();
 
   std::map<UnitId, int> waitFor;
   for (auto& bi : base.getItems()) {
-    if (bi.getAction() == BUILD) {
+    if (bi.getAction() == BuildItem::BUILD) {
       if (bi.timeFree > 0) {
         auto& unit = tech.getUnit(bi.getTarget());
         if (unit.builder != sc2::UNIT_TYPEID::INVALID) {
@@ -413,6 +418,7 @@ std::pair<int, BuildOrder> AddProductionForceful::improve(
   }
   return findBest(base, candidates, candindexes);
 }
+
 std::pair<int, BuildOrder> RemoveExtra::improve(const BuildOrder& base,
                                                 int depth) {
   std::vector<BuildOrder> candidates;
@@ -425,7 +431,7 @@ std::pair<int, BuildOrder> RemoveExtra::improve(const BuildOrder& base,
     for (auto it = bo.getItems().begin() + (bo.getItems().size() - 1),
               e = bo.getItems().begin();
          it != e; --it) {
-      if (it->getAction() == BUILD &&
+      if (it->getAction() == BuildItem::BUILD &&
           it->getTarget() == sc2::UNIT_TYPEID::PROTOSS_PYLON) {
         bo.getItems().erase(it);
         break;

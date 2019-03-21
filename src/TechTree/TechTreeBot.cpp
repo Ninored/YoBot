@@ -90,9 +90,8 @@ void TechTreeBot::OnStep() {
       Unit::Status::TRAVELLING,
     });
   }
-
   // std::cout << TechTree::getTechTree() << std::endl;
-  std::cout << TechTree::getTechTree().serialize() << std::endl;
+  //std::cout << TechTree::getTechTree().serialize() << std::endl;
 }
 
 }  // namespace suboo

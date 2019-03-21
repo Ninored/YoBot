@@ -18,12 +18,12 @@ target_compile_features(TechTreeGenerator PRIVATE cxx_std_17)
 
 
 ##### BoBuilder Executable
-file(GLOB bobuilder_sources ./BuildOrder/*.cpp ./BuildOrder/*.h)
-add_executable(BoBuilder apps/BoBuilder.cpp ${bobuilder_sources})
-target_include_directories(BoBuilder
+file(GLOB simulator_sources ./Simulator/*.cpp ./Simulator/*.h)
+add_executable(Simulator apps/Simulator.cpp ${simulator_sources})
+
+target_include_directories(Simulator
 	PUBLIC ${PROJECT_SOURCE_DIR}/include
-	PUBLIC ${PROJECT_SOURCE_DIR}/src/BuildOrder
+	PUBLIC ${PROJECT_SOURCE_DIR}/src/Simulator
 )
-target_link_libraries(BoBuilder PUBLIC debug TechTreeLib)
-target_link_libraries(BoBuilder PUBLIC optimized TechTreeLib)
-target_compile_features(BoBuilder PRIVATE cxx_std_17)
+target_link_libraries(Simulator PUBLIC TechTreeLib)
+target_compile_features(Simulator PRIVATE cxx_std_17)

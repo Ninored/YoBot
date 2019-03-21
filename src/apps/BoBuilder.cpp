@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 	std::cout << "Final realizable :" << std::endl;
 	boopt2.print(std::cout);
 
+
 	if (true) {
 		BuildOrder bo;
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
@@ -56,7 +57,7 @@ int main(int argc, char* argv[])
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
-		bo.addItem(TRANSFER_VESPENE);
+		bo.addItem(BuildItem::TRANSFER_VESPENE);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PROBE);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
@@ -76,7 +77,7 @@ int main(int argc, char* argv[])
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PHOENIX);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
-		bo.addItem(TRANSFER_VESPENE);
+		bo.addItem(BuildItem::TRANSFER_VESPENE);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_ZEALOT);
 		bo.addItem(sc2::UNIT_TYPEID::PROTOSS_PYLON);

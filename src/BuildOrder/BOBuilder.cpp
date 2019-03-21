@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include "BuildOrder/UnitTypes.h"
 #include "BuildOrder/boo.h"
+#include "BuildOrder/GameState.h"
 
 namespace suboo {
 
@@ -46,16 +47,18 @@ void addPreReq(std::vector<BuildItem>& pre, GameState& state,
       !state.hasFinishedUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR)) {
     pre.push_back({sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR});
     state.addUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
-    pre.push_back(TRANSFER_VESPENE);
+    pre.push_back(BuildItem::TRANSFER_VESPENE);
   }
   pre.push_back(unit.id);
   state.addUnit(unit.id);
   seen.insert(unit.id);
 }
+
 bool BOBuilder::enforcePrereqBySwap(BuildOrder& bo) {
   auto& tech = TechTree::getTechTree();
   // enforce prerequisites
-  GameState state{tech.getInitialUnits(), tech.getInitialMinerals(), tech.getInitialVespene()};
+  GameState state{tech.getInitialUnits(), tech.getInitialMinerals(),
+                  tech.getInitialVespene()};
   BuildOrder bopre;
   std::unordered_set<int> seen;
   for (auto& u : state.getFreeUnits()) {
@@ -67,7 +70,7 @@ bool BOBuilder::enforcePrereqBySwap(BuildOrder& bo) {
   int sz = bo.getItems().size();
   for (int i = 0; i < bo.getItems().size() && i >= 0; i++) {
     auto& bi = bo.getItems()[i];
-    if (bi.getAction() == BUILD) {
+    if (bi.getAction() == BuildItem::BUILD) {
       auto target = bi.getTarget();
       auto& unit = tech.getUnit(target);
       // unit prereq
@@ -92,7 +95,7 @@ bool BOBuilder::enforcePrereqBySwap(BuildOrder& bo) {
         }
         bopre.addItem(id);
         if (id == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
-          auto bbi = BuildItem(TRANSFER_VESPENE);
+          auto bbi = BuildItem(BuildItem::TRANSFER_VESPENE);
           for (j = std::max(0, i), e = bo.getItems().size(); j < e; j++) {
             if (bo.getItems()[j] == bbi) {
               bo.removeItem(j);
@@ -119,7 +122,8 @@ bool BOBuilder::enforcePrereqBySwap(BuildOrder& bo) {
 BuildOrder BOBuilder::enforcePrereq(const BuildOrder& bo) {
   auto& tech = TechTree::getTechTree();
   // enforce prerequisites
-  GameState state{tech.getInitialUnits(), tech.getInitialMinerals(), tech.getInitialVespene()};
+  GameState state{tech.getInitialUnits(), tech.getInitialMinerals(),
+                  tech.getInitialVespene()};
   BuildOrder bopre;
   std::unordered_set<int> seen;
   for (auto& u : state.getFreeUnits()) {
@@ -130,7 +134,7 @@ BuildOrder BOBuilder::enforcePrereq(const BuildOrder& bo) {
   }
   int vesp = 0;
   for (auto& bi : bo.getItems()) {
-    if (bi.getAction() == BUILD) {
+    if (bi.getAction() == BuildItem::BUILD) {
       auto target = bi.getTarget();
       auto& unit = tech.getUnit(target);
       // unit prereq
@@ -187,10 +191,10 @@ BuildOrder BOBuilder::improveBO(const BuildOrder& bo, int depth) {
         gain += res.first;
         optgain += res.first;
         best = res.second;
-        std::cout << "Improved results using " << p->getName() << " by "
+        /*std::cout << "Improved results using " << p->getName() << " by "
                   << res.first << " delta. Current best timing :"
                   << best.getFinal().getTimeStamp() << "s at depth " << depth
-                  << std::endl;
+                  << std::endl;*/
         // best.print(std::cout);
       } else {
         // std::cout << "No improvement of results using " << p->getName() << ".
@@ -206,10 +210,14 @@ BuildOrder BOBuilder::improveBO(const BuildOrder& bo, int depth) {
             gain += res.first;
             optgain += res.first;
             best = res.second;
-            std::cout << "Improved results (fast) using " << p->getName()
-                      << " by " << res.first << " delta. Current best timing :"
-                      << best.getFinal().getTimeStamp() << "s at depth "
-                      << depth << std::endl;
+            /*            std::cout << "Improved results (fast) using " <<
+               p->getName()
+                                  << " by " << res.first << " delta. Current
+               best timing :"
+                                  << best.getFinal().getTimeStamp() << "s at
+               depth "
+                                  << depth << std::endl;
+                                  */
             // best.print(std::cout);
           }
         }
@@ -225,16 +233,17 @@ bool timeBO(BuildOrder& bo) {
   // bo = addPower(bo);
   // at this point BO should be doable.
   // simulate it for timing
-  GameState gs{tech.getInitialUnits(), tech.getInitialMinerals(), tech.getInitialVespene()};
+  GameState gs{tech.getInitialUnits(), tech.getInitialMinerals(),
+               tech.getInitialVespene()};
   for (auto& bi : bo.getItems()) {
     bi.clearTimes();
     int cur = gs.getTimeStamp();
     // std::cout << "On :"; bi.print(std::cout); std::cout << std::endl;
-    if (bi.getAction() == BUILD) {
+    if (bi.getAction() == BuildItem::BUILD) {
       auto& u = tech.getUnit(bi.getTarget());
       std::pair<int, int> waited;
       if (!gs.waitForResources(u.mineral_cost, u.vespene_cost, &waited)) {
-        std::cout << "Insufficient resources collection in state \n";
+        // std::cout << "Insufficient resources collection in state \n";
         gs.print(std::cout);
         return false;
       } else {
@@ -243,7 +252,7 @@ bool timeBO(BuildOrder& bo) {
       }
       if ((int)u.prereq != 0 && !gs.hasFinishedUnit(u.prereq)) {
         if (!gs.waitforUnitCompletion(u.prereq)) {
-          //std::cout << "Insufficient requirements missing tech req :"
+          // std::cout << "Insufficient requirements missing tech req :"
           //          << tech.getUnit(u.prereq).name << std::endl;
           gs.print(std::cout);
           return false;
@@ -253,8 +262,8 @@ bool timeBO(BuildOrder& bo) {
       if (u.builder != sc2::UNIT_TYPEID::INVALID) {
         if (!gs.hasFreeUnit(u.builder)) {
           if (!gs.waitforUnitFree(u.builder)) {
-           // std::cout << "Insufficient requirements missing builder :"
-           //           << tech.getUnit(u.builder).name << std::endl;
+            // std::cout << "Insufficient requirements missing builder :"
+            //           << tech.getUnit(u.builder).name << std::endl;
             gs.print(std::cout);
             return false;
           }
@@ -280,8 +289,8 @@ bool timeBO(BuildOrder& bo) {
       gs.addUnit(
           UnitInstance(u.id, UnitInstance::BUILDING,
                        TechTree::getTechTree().getUnit(u.id).production_time));
-    } else if (bi.getAction() == TRANSFER_MINERALS) {
-    } else if (bi.getAction() == TRANSFER_VESPENE) {
+    } else if (bi.getAction() == BuildItem::TRANSFER_MINERALS) {
+    } else if (bi.getAction() == BuildItem::TRANSFER_VESPENE) {
       bi.timeFree = 0;
       auto prereq = sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
       if (!gs.hasFreeUnit(prereq)) {
@@ -331,7 +340,7 @@ bool timeBO(BuildOrder& bo) {
         gs.print(std::cout);
         return false;
       }
-    } else if (bi.getAction() == WAIT_GOAL) {
+    } else if (bi.getAction() == BuildItem::WAIT_GOAL) {
       auto cur = gs.getTimeStamp();
       // finalize build : free all units
       if (!gs.waitforAllUnitFree()) {
@@ -344,8 +353,7 @@ bool timeBO(BuildOrder& bo) {
     bi.setTime(gs.getTimeStamp());
   }
 
-  if (bo.getItems().empty() || bo.getItems().back().getAction() != WAIT_GOAL) {
-
+  if (bo.getItems().empty() || bo.getItems().back().getAction() != BuildItem::WAIT_GOAL) {
     auto cur = gs.getTimeStamp();
     // finalize build : free all units
     if (!gs.waitforAllUnitFree()) {
@@ -353,7 +361,7 @@ bool timeBO(BuildOrder& bo) {
       gs.print(std::cout);
       return false;
     }
-    auto bifin = BuildItem(WAIT_GOAL);
+    auto bifin = BuildItem(BuildItem::WAIT_GOAL);
     bifin.timeFree = gs.getTimeStamp() - cur;
     bo.getItems().push_back(bifin);
   }
