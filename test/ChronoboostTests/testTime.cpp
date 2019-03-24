@@ -4,6 +4,7 @@
 #include "catch.hpp"
 #include "BuildOrder.h"
 #include "BOBuilder.h"
+#include <fstream>
 
 using namespace suboo;
 
@@ -42,7 +43,7 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		std::cout << "Initial realizable :" << std::endl;
 		bo.print(std::cout);
 
-		auto t1 = bo.getFinal.getTimeStamp();
+		//int t1 = bo.getFinal.getTimeStamp();
 
 
 
@@ -58,8 +59,23 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		std::cout << "Initial realizable :" << std::endl;
 		bo.print(std::cout);
 
-		auto t2 = bo2.getFinal.getTimeStamp();
-
+		//int t2 = bo2.getFinal.getTimeStamp();
+		std::ifstream fichier("res.txt", std::ios::in);
+		std::string res1;
+		std::string res2;
+		if (fichier) {
+			std::getline(fichier, res1);
+			std::getline(fichier, res2);
+		}
+		int t1 = std::stoi(res1);
+		int t2 = std::stoi(res2);
+		/*
+		if (remove("res.txt") != 0) {
+			perror("Error deleting file");
+		}
+		else {
+			puts("Fichier supprimer !");
+		}*/
 		REQUIRE(t2 < t1);
 
 
