@@ -48,7 +48,7 @@ namespace suboo {
 
 		//on met dans un fichier les valeurs
 
-		std::ofstream fichier("res.txt", std::ios::app);
+		std::ofstream fichier("temps.txt", std::ios::app);
 		if (fichier) {
 			fichier << final.getTimeStamp() << std::endl;
 			fichier.close();

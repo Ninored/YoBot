@@ -304,16 +304,28 @@ namespace suboo {
 						gs.assignFreeUnit(u.builder, UnitInstance::BUSY, u.production_time);
 					}
 				}
-				/*
-				if (u.energy >=50) {
-					if (bi.timeFree > 20) {
-						bi.timeFree -= 10;
+				/* verif que u soit un nexus
+				s'il l'est, verif 50 energy
+				s'il a assez, verif target
+				faire passer target a chronoboost
+				energy -50, time free ...
+				*/
+				if (u.index == 2) {
+					if (u.energy >= 50) {
+						std::vector<UnitInstance> liste = gs.getBusyUnits();
+						if (!liste.empty) {
+							if (liste[0].time_to_free > 20) {
+								liste[0].time_to_free -= 10;
+							}
+							else {
+								liste[0].time_to_free = 2 * liste[0].time_to_free / 3;
+							}
+							u.energy -= 50;
+						}
+						
 					}
-					else {
-						bi.timeFree = 2 * bi.timeFree / 3;
-					}
-					u.energy -= 50;
-				}*/
+				}
+				
 
 				
 				if (u.food_provided < 0 && gs.getAvailableSupply() < -u.food_provided) {
