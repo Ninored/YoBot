@@ -10,21 +10,42 @@ using namespace suboo;
 
 TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 	GIVEN("An empty BuildOrder") {
-		/*
-		UnitInstance n1((UnitId)59, UnitInstance::UnitState::BUSY, 14);
-		UnitInstance i1((UnitId)83, UnitInstance::UnitState::BUSY, 18);
-		UnitInstance i2((UnitId)83, UnitInstance::UnitState::BUSY, 18);
-		UnitInstance i3((UnitId)83, UnitInstance::UnitState::BUSY, 18);
-		UnitInstance p1((UnitId)84, UnitInstance::UnitState::BUSY, 27);
-		UnitInstance p2((UnitId)84, UnitInstance::UnitState::BUSY, 27);
 
-		GameState gsi({n1, i1, p1}, 0, 0);
-		GameState gsf({n1, i1, i2, i3, p1, p2}, 0, 0);
-		//BuildOrder bo{gsi, {}, gsf};
-		BuildOrder bo(gsi, gsf);*/
 
+
+
+		GameState gsi = TechTree::getTechTree().getInitial();
+		GameState gsf();
+		BuildOrder bo1(gsi);
+		BuildOrder bo2(gsi);
+
+		bo1.addItem(UnitId::PROTOSS_PYLON);
+		bo1.addItem(UnitId::PROTOSS_GATEWAY);
+		bo1.addItem(UnitId::PROTOSS_ZEALOT);
+
+		bo2.addItem(UnitId::PROTOSS_PYLON);
+		bo2.addItem(UnitId::PROTOSS_GATEWAY);
+		bo2.addItem(UnitId::PROTOSS_ZEALOT);
+		bo2.addItem(BuildItem(BuildAction::CHRONO, UnitId::PROTOSS_ZEALOT));
+
+		timeBO(bo1);
+		timeBO(bo2);
+
+		int t1 = bo1.getFinal().getTimeStamp();
+		int t2 = bo2.getFinal().getTimeStamp();
+
+		REQUIRE(t2 < t1);
 		
 
+
+
+
+
+
+
+
+
+		/*
 
 		BOBuilder builder;
 
@@ -60,22 +81,7 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		bo.print(std::cout);
 
 		//int t2 = bo2.getFinal.getTimeStamp();
-		std::ifstream fichier("res.txt", std::ios::in);
-		std::string res1;
-		std::string res2;
-		if (fichier) {
-			std::getline(fichier, res1);
-			std::getline(fichier, res2);
-		}
-		int t1 = std::stoi(res1);
-		int t2 = std::stoi(res2);
-		/*
-		if (remove("res.txt") != 0) {
-			perror("Error deleting file");
-		}
-		else {
-			puts("Fichier supprimer !");
-		}*/
+
 		REQUIRE(t2 < t1);
 
 
@@ -84,6 +90,6 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 
 		//REQUIRE(bo == bo);
 		//REQUIRE(std::equal(bo, bo));
-
+		*/
 	}
 }

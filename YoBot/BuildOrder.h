@@ -63,6 +63,8 @@ namespace suboo {
 		UnitInstance(UnitId type);
 		UnitInstance(UnitId type, UnitState state, int time_to_free) :type(type), state(state), time_to_free(time_to_free) {}
 		void print(std::ostream & out) const;
+
+		//int energy;
 	};
 	std::string to_string(const UnitInstance::UnitState & state);
 	class GameState {
@@ -161,6 +163,7 @@ namespace suboo {
 		
 		BuildItem(UnitId id) :action(BUILD), target(id),time(0) {}
 		BuildItem(BuildAction action) :action(action), target(UnitId::INVALID), time(0) {}
+		BuildItem(BuildAction action, UnitId id) :action(action), target(id), time(0) {}
 
 		BuildAction getAction() const { return action; }
 		UnitId getTarget() const { return target; }
@@ -181,7 +184,8 @@ namespace suboo {
 		GameState final;				
 	public :
 		BuildOrder(){}
-		BuildOrder(GameState gsi, GameState gsf) : initial(gsi), final(gsf) {}
+		//BuildOrder(GameState gsi, GameState gsf) : initial(gsi), final(gsf) {}
+		BuildOrder(GameState gsi) : initial(gsi) {}
 		void print(std::ostream & out);
 		template<typename T> 
 		void addItem(T tocreate)

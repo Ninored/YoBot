@@ -3,7 +3,6 @@
 #include <iostream>
 #include <mutex>
 #include <string>
-#include <fstream>
 
 namespace suboo {
 	BuildGoal::BuildGoal(int deadline) : framesToCompletion(deadline), desiredPerUnit(TechTree::getTechTree().size(), 0)
@@ -45,17 +44,6 @@ namespace suboo {
 			out << std::endl;
 		}
 		out << "Reached state at " << final.getTimeStamp() / 60 << "m" << final.getTimeStamp() % 60 << "s"<< std::endl;
-
-		//on met dans un fichier les valeurs
-
-		std::ofstream fichier("temps.txt", std::ios::app);
-		if (fichier) {
-			fichier << final.getTimeStamp() << std::endl;
-			fichier.close();
-		}
-		else {
-			std::cerr << "Impossible d'ouvrir le fichier" << std::endl;
-		}
 
 		final.print(out);
 	}
