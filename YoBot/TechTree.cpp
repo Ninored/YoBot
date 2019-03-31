@@ -2,19 +2,19 @@
 #include "BuildOrder.h"
 namespace suboo {
 TechTree::TechTree() :
-	initial({ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)59),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
- UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0),
+	initial({ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)59, UnitInstance::FREE, 0, 50),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
+ UnitInstance( (UnitId)84, UnitInstance::MINING_MINERALS, 0, 0),
 	}) {
   initial.getMinerals() = 50;
   initial.getVespene() = 0;
@@ -49,8 +49,8 @@ TechTree::TechTree() :
 	(UnitId)59,  // ID
 	"Nexus", // name
 	400, // gold
-	0, // gas
-	  50, //energy
+	5, // gas
+	50, //energy
 	15,  // food
 	(UnitId)84,  // builder unit  
 	(UnitId)0,  // tech requirement  

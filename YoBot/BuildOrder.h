@@ -60,11 +60,12 @@ namespace suboo {
 		UnitState state;
 		float time_to_free; // -1 means we stay in state (e.g. mining) until new orders come in
 		int time_with_chrono; //temps restant sous chronoboost
+		int energy;
 		UnitInstance(UnitId type);
-		UnitInstance(UnitId type, UnitState state, int time_to_free) :type(type), state(state), time_to_free(time_to_free) {}
+		UnitInstance(UnitId type, UnitState state, int time_to_free, int energy) :type(type), state(state), time_to_free(time_to_free), energy(energy) {}
 		void print(std::ostream & out) const;
 
-		//int energy;
+		
 	};
 	std::string to_string(const UnitInstance::UnitState & state);
 	class GameState {
@@ -81,9 +82,9 @@ namespace suboo {
 
 	public :
 		GameState(const std::vector<UnitInstance> & units = {}, int minerals = 0, int vespene = 0) : freeUnits(units), minerals(minerals), mps(-1.0), vespene(vespene), vps(-1.0), timestamp(0),supply(-1) {}
-		const std::vector<UnitInstance> & getFreeUnits() const { return freeUnits; }
-		const std::vector<UnitInstance> & getAttackUnits() const { return attackUnits; }
-		const std::vector<UnitInstance> & getBusyUnits() const { return busyUnits; }
+		std::vector<UnitInstance> & getFreeUnits() { return freeUnits; }
+		std::vector<UnitInstance> & getAttackUnits() { return attackUnits; }
+		std::vector<UnitInstance> & getBusyUnits() { return busyUnits; }
 		bool hasFreeUnit(UnitId unit) const; // must be free; 
 		bool hasFinishedUnit(UnitId unit) const; // must be finished; 
 		void addUnit(UnitId unit);

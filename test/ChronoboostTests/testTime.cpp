@@ -11,28 +11,32 @@ using namespace suboo;
 TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 	GIVEN("An empty BuildOrder") {
 
-
+		//case
 
 
 		GameState gsi = TechTree::getTechTree().getInitial();
-		GameState gsf();
 		BuildOrder bo1(gsi);
 		BuildOrder bo2(gsi);
 
 		bo1.addItem(UnitId::PROTOSS_PYLON);
 		bo1.addItem(UnitId::PROTOSS_GATEWAY);
 		bo1.addItem(UnitId::PROTOSS_ZEALOT);
+		bo1.addItem(BuildAction::WAIT_GOAL);
 
 		bo2.addItem(UnitId::PROTOSS_PYLON);
 		bo2.addItem(UnitId::PROTOSS_GATEWAY);
 		bo2.addItem(UnitId::PROTOSS_ZEALOT);
 		bo2.addItem(BuildItem(BuildAction::CHRONO, UnitId::PROTOSS_ZEALOT));
+		bo2.addItem(BuildAction::WAIT_GOAL);
 
 		timeBO(bo1);
 		timeBO(bo2);
 
 		int t1 = bo1.getFinal().getTimeStamp();
 		int t2 = bo2.getFinal().getTimeStamp();
+
+		std::cout << "sans chrono : " << t1 << std::endl;
+		std::cout << "avec chrono : " << t2 << std::endl;
 
 		REQUIRE(t2 < t1);
 		

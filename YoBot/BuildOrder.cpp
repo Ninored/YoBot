@@ -360,6 +360,7 @@ namespace suboo {
 	}
 	bool GameState::waitforAllUnitFree()
 	{
+    std::cout << "Waiting unit to be free" << std::endl;
 		int index = 0;
 		int best = -1;
 		for (auto & u : busyUnits) {
@@ -374,7 +375,7 @@ namespace suboo {
 			return true;
 		}
 		else {
-			// std::cout << "Waited for all to be free for " << units[best].time_to_free << "s." << std::endl;
+			std::cout << "Waited for all to be free for " << busyUnits[best].time_to_free << "s." << std::endl;
 			stepForward(busyUnits[best].time_to_free);
 			return true;
 		}		

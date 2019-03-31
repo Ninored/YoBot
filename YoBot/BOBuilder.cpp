@@ -267,6 +267,7 @@ namespace suboo {
 			int cur = gs.getTimeStamp();
 			// std::cout << "On :"; bi.print(std::cout); std::cout << std::endl;
 			if (bi.getAction() == BUILD) {
+        std::cout << "Itemd is building" << std::endl;
 				auto & u = tech.getUnitById(bi.getTarget());
 				std::pair<int, int> waited;
 				if (!gs.waitForResources(u.mineral_cost, u.vespene_cost, & waited)) {
@@ -316,8 +317,8 @@ namespace suboo {
 					bi.timeFood = gs.getTimeStamp() - cur;
 				}
 				gs.getMinerals() -= u.mineral_cost;
-				gs.getVespene() -= u.vespene_cost;
-				gs.addUnit(UnitInstance(u.type, UnitInstance::BUILDING, TechTree::getTechTree().getUnitById(u.type).production_time));
+				gs.getVespene() -= u.vespene_cost;gs.addUnit(UnitInstance(u.type, UnitInstance::BUILDING, TechTree::getTechTree().getUnitById(u.type).
+				production_time, 0));
 			}
 			else if (bi.getAction() == TRANSFER_MINERALS) {
 				//todo
@@ -385,18 +386,30 @@ namespace suboo {
 				bi.timeFree = gs.getTimeStamp() - cur;
 			}
 			else if (bi.getAction() == CHRONO) {
+				
+				std::cout << "je suis la" << std::endl;
+        auto & fu = gs.getFreeUnits();
+        auto & bu = gs.getBusyUnits();
 
-				std::vector<UnitInstance> liste = gs.getBusyUnits();
-				for (UnitInstance ui : liste) {
+				for (auto & ui : fu) {
 					if (ui.type == UnitId::PROTOSS_NEXUS) {
+						std::cout << "energy du nexus :" << ui.energy << std::endl;
 						if (ui.energy >= 50) {
-							if (bi.timeFree > 20) {
-								bi.timeFree -= 10;
+							std::cout << "2" << std::endl;
+							for ( auto & uitarget : bu) {
+								if (tech.getUnitById(bi.getTarget()).builder == uitarget.type || uitarget.type == bi.getTarget()){
+								//if (uitarget.type == bi.getTarget()) {
+									std::cout << "time_to_free : " << uitarget.time_to_free << std::endl;
+									if (uitarget.time_to_free > 20) {
+										uitarget.time_to_free -= 10;
+									}
+									else {
+										uitarget.time_to_free -= uitarget.time_to_free / 2;
+									}
+									ui.energy -= 50;
+								}
+                std::cout << "time_to_free after: " << uitarget.time_to_free << std::endl;
 							}
-							else {
-								bi.timeFree = 2 * bi.timeFree / 3;
-							}
-							ui.energy -= 50;
 						}
 					}
 				}
@@ -405,6 +418,7 @@ namespace suboo {
 		}
 
 		if (bo.getItems().back().getAction() != WAIT_GOAL) {
+		  std::cout << "wait_goal" << std::endl;
 			auto cur = gs.getTimeStamp();
 			// finalize build : free all units
 			if (!gs.waitforAllUnitFree()) {
