@@ -56,12 +56,18 @@ class UnitInstance {
   void print(std::ostream& out) const;
   std::string print_status() const {
     switch (state) {
-      case suboo::UnitInstance::BUILDING: return "B";
-      case suboo::UnitInstance::BUSY: return "C";
-      case suboo::UnitInstance::MINING_MINERALS: return "M";
-      case suboo::UnitInstance::MINING_VESPENE: return "V";
-      case suboo::UnitInstance::FREE: return "F";
-      default : return "-" ;
+      case suboo::UnitInstance::BUILDING:
+        return "B";
+      case suboo::UnitInstance::BUSY:
+        return "C";
+      case suboo::UnitInstance::MINING_MINERALS:
+        return "M";
+      case suboo::UnitInstance::MINING_VESPENE:
+        return "V";
+      case suboo::UnitInstance::FREE:
+        return "F";
+      default:
+        return "-";
     }
   }
 };

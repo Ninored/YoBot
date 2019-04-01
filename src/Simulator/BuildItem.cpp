@@ -2,7 +2,10 @@
 
 namespace suboo {
 
-BuildItem::BuildItem(Action a, UnitId t) : action(a), target(t), time(0) {}
+BuildItem::BuildItem(Action a, UnitId t) 
+  : action(a), 
+  target(t), 
+  time(0) {}
 
 BuildItem::Action BuildItem::getAction() const { return action; }
 UnitId BuildItem::getTarget() const { return target; }
@@ -54,7 +57,7 @@ std::ostream& operator<<(std::ostream& os, const BuildItem& i) {
       action_name = "UNDEFINED";
       break;
   }
-  os << "[" << action_name << "]: " << sc2::UnitTypeToName(i.target);
+  os << "(" << i.time << ")" << "[" << action_name << "]: " << sc2::UnitTypeToName(i.target);
   return os;
 }
 }  // namespace suboo

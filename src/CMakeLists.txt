@@ -18,8 +18,11 @@ target_compile_features(TechTreeGenerator PRIVATE cxx_std_17)
 
 
 ##### BoBuilder Executable
-file(GLOB simulator_sources ./Simulator/*.cpp ./Simulator/*.h)
-add_executable(Simulator apps/Simulator.cpp ${simulator_sources})
+file(GLOB_RECURSE simulator_sources 
+	${PROJECT_SOURCE_DIR}/src/Simulator/*.cpp 
+	${PROJECT_SOURCE_DIR}/src/Simulator/*.h
+)
+add_executable(Simulator apps/Simulation.cpp ${simulator_sources})
 
 target_include_directories(Simulator
 	PUBLIC ${PROJECT_SOURCE_DIR}/include

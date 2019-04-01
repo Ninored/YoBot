@@ -15,15 +15,21 @@ class GameState {
   float minerals;
   float mps;
 
-  float vespene;
+  float vespenes;
   float vps;
 
   int timestamp;
 
   int supply;
 
+
+  void calculateMps();
+  void calculateVps();
+  void calculateSupply();
+
+
  public:
-  GameState();
+  GameState(const std::vector<UnitInstance> & units, int m, int v);
   friend std::ostream& operator<<(std::ostream& os, const GameState& state);
 
   // Step function
@@ -33,12 +39,15 @@ class GameState {
   int getAvailabelSupply() const;
   int getMaxSupply() const;
   int getTimeStamp() const;
-  float getMinerals() const;
+  float& getMinerals();
   float getMps() const;
-  float getVespene() const;
+  float& getVespene();
   float getVps() const;
   const std::list<UnitInstance*>& getFreeUnits() const;
   const std::list<UnitInstance*>& getBusyUnits() const;
+  
+  // Set
+  void setFree(UnitInstance* inst);
 
   // Mutate unit
   bool addUnit(UnitId unit);
@@ -53,6 +62,7 @@ class GameState {
   bool waitforUnitFree(UnitId id);
   bool waitforFreeSupply(int nedded);
   bool waitforAllUnitFree();
+  std::pair<int, int> waitForRessources(int minerals, int vespene);
 
   // Count
   int countUnit(UnitId id) const;

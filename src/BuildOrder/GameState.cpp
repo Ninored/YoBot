@@ -53,6 +53,7 @@ void GameState::stepForward(int secs) {
         ++it;
       }
     }
+    // Changement dans le nombre de prob dispo et donc des MPS et VPS
     if (changed) {
       mps = -1.0f;
       vps = -1.0f;
