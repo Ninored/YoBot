@@ -11,8 +11,6 @@ using namespace suboo;
 TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 	GIVEN("An empty BuildOrder") {
 
-		//case
-
 
 		GameState gsi = TechTree::getTechTree().getInitial();
 		BuildOrder bo1(gsi);
@@ -38,10 +36,32 @@ TEST_CASE("Chronoboost reduces the time", "[chrono]") {
 		std::cout << "sans chrono : " << t1 << std::endl;
 		std::cout << "avec chrono : " << t2 << std::endl;
 
+		//le temps avec chronoboost est plus petit que sans
 		REQUIRE(t2 < t1);
+
+		//l'énergie du nexus a bien été soustraite
+		GameState gsf = bo2.getFinal();
+		int e1;
+		int e2;
+		auto & fu = gsi.getFreeUnits();
+		for (auto & ui : fu) {
+			if (ui.type == UnitId::PROTOSS_NEXUS) {
+				std::cout << "energy du nexus avant chronoboost :" << ui.energy << std::endl;
+				e1 = ui.energy;
+			}
+		}
+		fu = gsf.getFreeUnits();
+		for (auto & ui : fu) {
+			if (ui.type == UnitId::PROTOSS_NEXUS) {
+				std::cout << "energy du nexus après chronoboost :" << ui.energy << std::endl;
+				e2 = ui.energy;
+			}
+		}
+
+		REQUIRE(e2 == e1 - 50);
 		
 
-
+		
 
 
 

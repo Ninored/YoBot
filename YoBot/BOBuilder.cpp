@@ -387,30 +387,27 @@ namespace suboo {
 			}
 			else if (bi.getAction() == CHRONO) {
 				
-				std::cout << "je suis la" << std::endl;
-        auto & fu = gs.getFreeUnits();
-        auto & bu = gs.getBusyUnits();
+				auto & fu = gs.getFreeUnits();
+				auto & bu = gs.getBusyUnits();
 
 				for (auto & ui : fu) {
 					if (ui.type == UnitId::PROTOSS_NEXUS) {
-						std::cout << "energy du nexus :" << ui.energy << std::endl;
 						if (ui.energy >= 50) {
-							std::cout << "2" << std::endl;
 							for ( auto & uitarget : bu) {
 								if (tech.getUnitById(bi.getTarget()).builder == uitarget.type || uitarget.type == bi.getTarget()){
-								//if (uitarget.type == bi.getTarget()) {
 									std::cout << "time_to_free : " << uitarget.time_to_free << std::endl;
 									if (uitarget.time_to_free > 20) {
 										uitarget.time_to_free -= 10;
 									}
 									else {
+										uitarget.time_with_chrono = 20 - uitarget.time_to_free; //on enleve aux temps des autres cases une val = à twc * 1.5
 										uitarget.time_to_free -= uitarget.time_to_free / 2;
 									}
-									ui.energy -= 50;
 								}
-                std::cout << "time_to_free after: " << uitarget.time_to_free << std::endl;
+								std::cout << "time_to_free after: " << uitarget.time_to_free << std::endl;
 							}
 						}
+						ui.energy -= 50;
 					}
 				}
 			}
