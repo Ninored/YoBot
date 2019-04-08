@@ -14,6 +14,7 @@ class BIA {
   void setTime(int newTime) { time = newTime; }
   int getTime() const { return time; }
 
+
   virtual void accept(BIOVisitor& v) = 0;
 };
 
@@ -25,5 +26,12 @@ class BIABuild : public BIA {
   virtual void accept(BIOVisitor& v) override { v.visite(*this); }
   UnitId getTarget() { return target; }
 };
+
+class BIAWaitGoal : public BIA {
+ public:
+  BIAWaitGoal() {}
+  virtual void accept(BIOVisitor& v) override { v.visite(*this); }
+};
+
 }  // namespace suboo
 #endif  // !INCLUDE_SIMULATOR_BUILDACTIONS_BUILDACTIONS

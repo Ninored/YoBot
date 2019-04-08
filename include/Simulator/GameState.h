@@ -8,9 +8,9 @@
 
 namespace suboo {
 class GameState {
-  std::vector<UnitInstance> allUnits;
-  std::list<UnitInstance*> freeUnits;
-  std::list<UnitInstance*> busyUnits;
+  std::vector<UnitInstance> freeUnits;
+  std::vector<UnitInstance> attackUnits;
+  std::vector<UnitInstance> busyUnits;
 
   float minerals;
   float mps;
@@ -43,11 +43,12 @@ class GameState {
   float getMps() const;
   float& getVespene();
   float getVps() const;
-  const std::list<UnitInstance*>& getFreeUnits() const;
-  const std::list<UnitInstance*>& getBusyUnits() const;
+  const std::vector<UnitInstance>& getFreeUnits() const;
+  const std::vector<UnitInstance>& getBusyUnits() const;
   
   // Set
-  void setFree(UnitInstance* inst);
+  void setFree(std::vector<UnitInstance>::iterator& it);
+  void setBusy(std::vector<UnitInstance>::iterator& it);
 
   // Mutate unit
   bool addUnit(UnitId unit);
@@ -60,6 +61,7 @@ class GameState {
 
   // Wait function
   bool waitforUnitFree(UnitId id);
+  bool waitforUnitCompletion(UnitId id);
   bool waitforFreeSupply(int nedded);
   bool waitforAllUnitFree();
   std::pair<int, int> waitForRessources(int minerals, int vespene);

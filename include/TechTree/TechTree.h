@@ -36,7 +36,18 @@ class Unit {
   Status action_status;  // Unit action behavior
 
   // Firends
-  // friend std::ostream& operator<<(std::ostream& os, const Unit& u);
+  friend std::ostream& operator<<(std::ostream& os, const Unit& u){ 
+    os << "[" << u.name << "]" << std::endl;
+    os << "\t" << "id: " << u.id << std::endl;
+    os << "\t" << "mineral_cost: " << u.mineral_cost << std::endl;
+    os << "\t" << "vespene_cost: " << u.vespene_cost << std::endl;
+    os << "\t" << "food_provided: " << u.food_provided << std::endl;
+    os << "\t" << "prereq: " << u.prereq << std::endl;
+    os << "\t" << "builder: " << u.builder << std::endl;
+    os << "\t" << "production_time: " << u.production_time << std::endl;
+    os << "\t" << "travel_time: " << u.travel_time << std::endl;
+    return os;
+  }
 };
 
 /**
@@ -49,11 +60,12 @@ class UnitInstance {
   UnitState state;
   int time_to_free;
 
-  UnitInstance(UnitId id) : type(id), state(MINING_MINERALS), time_to_free(0){};
+  UnitInstance(UnitId id) : type(id), state(FREE), time_to_free(0){};
   UnitInstance(UnitId id, UnitState state, int time)
       : type(id), state(state), time_to_free(time){};
 
   void print(std::ostream& out) const;
+
   std::string print_status() const {
     switch (state) {
       case suboo::UnitInstance::BUILDING:
@@ -134,8 +146,10 @@ class TechTree {
 
     nlohmann::json i_units = j.at("initial_units");
     if (!i_units.is_null())
-      for (auto u : i_units.get<std::vector<int>>())
-        initial_unitinstances.emplace_back(UnitInstance(u));
+      for (auto u : i_units)
+        initial_unitinstances.emplace_back(
+            UnitInstance((UnitId)u.at("id").get<int>(),
+                         (UnitInstance::UnitState)u.at("state").get<int>(), 0));
 
     for (auto u : j["units"]) {
       Unit unit;
@@ -146,6 +160,7 @@ class TechTree {
       u.at("food_provided").get_to(unit.food_provided);
       u.at("production_time").get_to(unit.production_time);
       u.at("travel_time").get_to(unit.travel_time);
+      unit.builder = u.at("builder").get<int>();
       unit.prereq = u.at("requirement").get<int>();
       u.at("action_status").get_to(unit.action_status);
       if (!u.at("abilities").is_null())
@@ -164,9 +179,14 @@ class TechTree {
     root["initial_minerales"] = initial_minerales;
     root["initial_vespene"] = initial_vespene;
 
+    /* FIXME: Add unit state */
     nlohmann::json init_units;
-    for (auto& units : initial_unitinstances)
-      init_units.push_back((int)units.type);
+    for (auto& units : initial_unitinstances) {
+      nlohmann::json ui;
+      ui["id"] = (int)units.type;
+      ui["state"] = units.state;
+      init_units.push_back(ui);
+    }
     root["initial_units"] = init_units;
 
     // Units

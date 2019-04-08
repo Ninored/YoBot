@@ -23,8 +23,14 @@ void TechTreeBot::OnGameStart() {
 
   // inspect and create an initial state
   std::vector<UnitInstance> state;
-  for (auto u : Observation()->GetUnits(sc2::Unit::Alliance::Self))
-    state.emplace_back(UnitInstance(u->unit_type));
+  for (auto u : Observation()->GetUnits(sc2::Unit::Alliance::Self)) {
+    /* FIXME: Specificity */
+    if (u->unit_type == sc2::UNIT_TYPEID::PROTOSS_PROBE)
+      state.emplace_back(UnitInstance(u->unit_type, UnitInstance::MINING_MINERALS, 0));
+    else
+      state.emplace_back(UnitInstance(u->unit_type));
+  
+  }
 
   TechTree::getTechTree().setInitialState(state, Observation()->GetMinerals(),
                                           Observation()->GetVespene());

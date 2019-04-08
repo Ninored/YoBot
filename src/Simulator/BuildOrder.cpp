@@ -1,4 +1,5 @@
 #include "Simulator/BuildOrder.h"
+#include "Simulator/VisitorPrintBO.h"
 
 namespace suboo {
 BuildOrder::BuildOrder(GameState init): initial(init), final(init) {}
@@ -23,11 +24,9 @@ void BuildOrder::moveLast(int i) {}
 
 std::ostream& operator<<(std::ostream& os, const BuildOrder& bo) { 
   os << "[BuildOrder]" << std::endl;
-  /*
-  for (BIA* i : bo.items) {
-    os << "\t" << *i << std::endl;
-  }
-  */
+  BuildOrder bb(bo);
+  os << PrintBo(bb) << std::endl;
+  
   return os;
 }
 }  // namespace suboo
