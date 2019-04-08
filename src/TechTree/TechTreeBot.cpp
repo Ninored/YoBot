@@ -83,6 +83,10 @@ void TechTreeBot::OnStep() {
             .compare(0, 6, "PROTOS") != 0)
       continue;
 
+    UnitId tech_req = unitdesc.tech_requirement;
+    if (tech_req == sc2::UNIT_TYPEID::PROTOSS_NEXUS)
+      tech_req = sc2::UNIT_TYPEID::PROTOSS_PYLON;
+
     TechTree::getTechTree().addUnit({
       unitdesc.unit_type_id,
       unitdesc.name,
@@ -90,7 +94,7 @@ void TechTreeBot::OnStep() {
       unitdesc.vespene_cost,
       (int)unitdesc.food_provided - (int)unitdesc.food_required,
       unitToAbilities[(int)unitdesc.unit_type_id],
-      unitdesc.tech_requirement,
+      tech_req,
       abilityToUnits[(int)unitdesc.ability_id],
       (int)((float)unitdesc.build_time / 22.4),
       Unit::Status::TRAVELLING,

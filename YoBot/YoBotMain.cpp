@@ -5,8 +5,8 @@
 #include "sc2utils/sc2_arg_parser.h"
 #include "LadderInterface.h"
 
-#define _GENTECHTREE 1
-//#define _BOSEARCH 1
+//#define _GENTECHTREE 1
+#define _BOSEARCH 1
 //#define _SELFPLAY 1
 //#define _RELEASE 1
 //#undef _RELEASE
@@ -130,6 +130,17 @@ using namespace suboo;
 
 int main(int argc, char* argv[])
 {
+
+  BuildOrder boo;
+  boo.addItem(UnitId::PROTOSS_PYLON);
+  boo.addItem(UnitId::PROTOSS_GATEWAY);
+  boo.addItem(UnitId::PROTOSS_ZEALOT);
+
+  timeBO(boo);
+  boo.print(std::cout);
+
+  return 0;
+
 	BOBuilder builder;
 
 	BuildGoal goal(0); // ASAP

@@ -20,6 +20,7 @@ bool isRelevant(const sc2::UnitTypeData & unitdesc, const std::unordered_map<int
 
 void suboo::TechBot::OnGameStart()
 {
+  /*
 	
 	auto & types = Observation()->GetUnitTypeData();
 	auto & abilities = Observation()->GetAbilityData();
@@ -65,12 +66,13 @@ void suboo::TechBot::OnGameStart()
 		}
 	}
 	Debug()->SendDebug();
-
+  */
 
 }
 
 void suboo::TechBot::OnStep()
 {
+  /*
 	if (Observation()->GetGameLoop() == 5) {
 
 		auto & types = Observation()->GetUnitTypeData();
@@ -186,4 +188,5 @@ void suboo::TechBot::OnStep()
 		out << "} //end ns \n";
 		out.close();
 	}
+  */
 }
