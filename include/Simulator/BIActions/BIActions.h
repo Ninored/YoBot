@@ -14,7 +14,6 @@ class BIA {
   void setTime(int newTime) { time = newTime; }
   int getTime() const { return time; }
 
-
   virtual void accept(BIOVisitor& v) = 0;
 };
 
@@ -25,6 +24,12 @@ class BIABuild : public BIA {
   BIABuild(UnitId t) : target(t) {}
   virtual void accept(BIOVisitor& v) override { v.visite(*this); }
   UnitId getTarget() { return target; }
+};
+
+class BIAMineVespene : public BIA {
+ public:
+  BIAMineVespene() {}
+  virtual void accept(BIOVisitor& v) override { v.visite(*this); }
 };
 
 class BIAWaitGoal : public BIA {

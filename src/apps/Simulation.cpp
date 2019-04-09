@@ -18,10 +18,30 @@ int main(int argc, char** argv) {
   goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL, 4);
   std::cout << goal << std::endl;
 
+  /* 
+  YoBot(new):  95 sec 
+  YoBot(legacy):  95 sec 
+  PROBOEngine: 91 sec with chronoboost
+
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_PYLON));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_GATEWAY));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_ZEALOT));
   bo.addItem(new BIAWaitGoal());
+  */
+
+  /* 
+  PROBO Engine: 2min 48 with chronoboost
+  YOBOT (legacy): 3min 21
+  */
+  bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_PYLON));
+  bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_GATEWAY));
+  bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR));
+  bo.addItem(new BIAMineVespene());
+  bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_CYBERNETICSCORE));
+  bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_STARGATE));
+  bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_PHOENIX));
+  bo.addItem(new BIAWaitGoal());
+
 
   std::cout << bo << std::endl;
 

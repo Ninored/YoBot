@@ -31,6 +31,11 @@ class PrintBo : public BIOVisitor {
     const Unit& u = tt.getUnit(e.getTarget());
     ss << "[BUILD]" << u.name << " " << e.getTime() << " s" << std::endl;
   }
+
+  virtual void visite(BIAMineVespene& e) override {
+    ss << "[Mine Vespene]" << std::endl;
+  }
+
   virtual void visite(BIAWaitGoal& e) override {
     ss << "[WaitGoal] " << e.getTime() << " s" << std::endl;
   }

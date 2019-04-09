@@ -25,7 +25,7 @@ void GameState::calculateMps() {
 }
 void GameState::calculateVps() {
   vps = 0;
-  for (auto u : freeUnits) {
+  for (auto u : busyUnits) {
     if (u.type == sc2::UNIT_TYPEID::PROTOSS_PROBE &&
         u.state == u.MINING_VESPENE)
       vps += 0.649f;
@@ -68,6 +68,11 @@ void GameState::step(int sec) {
     for (auto it = busyUnits.begin(); it != busyUnits.end(); /* NA */) {
       it->time_to_free--;
       if (it->time_to_free <= 0) {
+        if (!sc2util::IsWorkerType(it->type))
+          it->state = it->FREE;
+        else
+          it->state = it->MINING_MINERALS;
+
         setFree(it);
       } else {
         ++it;
@@ -107,9 +112,23 @@ void GameState::setBusy(std::vector<UnitInstance>::iterator& it) {
 
 // Mutate unit
 bool GameState::assignProbe(UnitInstance::UnitState state) {
-  calculateMps();
+  int max = 3;
+  for (auto it = freeUnits.begin(); it != freeUnits.end(); /* NA */) {
+    if (max <= 0) break;
+    auto& u = *it;
+    if (sc2util::IsWorkerType(u.type) && u.state == u.FREE ||
+        u.state == u.MINING_MINERALS) {
+      u.state = u.MINING_VESPENE;
+      setBusy(it);
+      max--;
+      continue;
+    }
+    ++it;
+  }
+
   calculateVps();
-  return true;
+  calculateMps();
+  return max <= 0;
 }
 
 bool GameState::assignFreeUnit(UnitId type, UnitInstance::UnitState state,
@@ -141,31 +160,37 @@ bool GameState::waitforUnitCompletion(UnitId id) {
   });
   if (it == busyUnits.end()) return false;
 
-
-  std::cout << "[waitforUnitCompletio] wait for" << (int)id << "): " << it->time_to_free << std::endl;
+  std::cout << "[waitforUnitCompletio] wait for" << (int)id
+            << "): " << it->time_to_free << std::endl;
   step(it->time_to_free);
   return true;
 }
 bool GameState::waitforUnitFree(UnitId id) {
   /* Search builder */
-  auto it = std::min_element(std::begin(busyUnits), std::end(busyUnits),
-                        [id](const UnitInstance& a, const UnitInstance& b) {
-                          return a.time_to_free < b.time_to_free;
-                        });
+  auto it =
+      std::min_element(std::begin(busyUnits), std::end(busyUnits),
+                       [id](const UnitInstance& a, const UnitInstance& b) {
+                         return a.time_to_free < b.time_to_free;
+                       });
 
   if (it == busyUnits.end()) return false;
 
-  std::cout << "[waitforUnitFree] wait for (" << (int)id << "): " << it->time_to_free << std::endl;
+  std::cout << "[waitforUnitFree] wait for (" << (int)id
+            << "): " << it->time_to_free << std::endl;
   step(it->time_to_free);
 
   return true;
 }
-bool GameState::waitforFreeSupply(int nedded) { return true; }
+
+bool GameState::waitforFreeSupply(int nedded) { 
+  std::cerr << "[TO IMPLEMENT]" << std::endl;  
+  return true; 
+}
+
 bool GameState::waitforAllUnitFree() {
   int time_to_free = 0;
-  for (auto u : busyUnits) 
-    if (time_to_free < u.time_to_free )
-      time_to_free = u.time_to_free;
+  for (auto u : busyUnits)
+    if (time_to_free < u.time_to_free) time_to_free = u.time_to_free;
 
   step(time_to_free);
   return true;
@@ -210,13 +235,13 @@ std::ostream& operator<<(std::ostream& os, const GameState& state) {
   for (auto u : state.freeUnits) {
     os << u.type << ", ";
   }
-  os << " )"<< std::endl;
+  os << " )" << std::endl;
 
   os << "\t[busyUnits]: (";
   for (auto u : state.busyUnits) {
     os << u.type << ", ";
   }
-  os << " )"<< std::endl;
+  os << " )" << std::endl;
   return os;
 }
 

@@ -9,7 +9,8 @@ void Simulator::visite(BIABuild& e) {
   auto tt = TechTree::getTechTree();
   auto u = tt.getUnit(e.getTarget());
 
-  std::cout << "==========================================="  << std::endl << u << std::endl;
+  std::cout << "===========================================" << std::endl
+            << u << std::endl;
 
   std::pair<int, int> waited;
   int current = gs.getTimeStamp();
@@ -39,14 +40,57 @@ void Simulator::visite(BIABuild& e) {
   std::cout << "GS: " << gs << std::endl;
 }
 
-void Simulator::visite(BIAWaitGoal& e) { 
-  gs.waitforAllUnitFree(); 
+void Simulator::visite(BIAMineVespene& e) {
+  auto prereq = sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
+  if (!gs.hasFreeUnit(prereq)) {
+    if (!gs.waitforUnitCompletion(prereq)) {
+      std::cerr << "[ERROR] No assimilator in BuildOrder" << std::endl;
+      return;
+    }
+  }
+  int gas = 0;
+  int soongas = 0;
+  int vcount = 0;
+
+  for (auto& u : gs.getFreeUnits()) {
+    if (u.state == UnitInstance::MINING_VESPENE) {
+      vcount++;
+    } else if (u.type == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR &&
+               u.state == UnitInstance::FREE) {
+      gas++;
+    }
+  }
+  for (auto& u : gs.getBusyUnits()) {
+    if (u.state == UnitInstance::MINING_VESPENE) {
+      vcount++;
+    } else if (u.type == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
+      soongas++;
+    }
+  }
+
+  if (vcount >= 3 * (gas + soongas)) {
+    std::cerr << "Gas over saturated skipping \n";
+    return;
+  }
+  if (vcount >= 3 * gas) {
+    if (!gs.waitforUnitCompletion(prereq)) {
+      std::cerr << "No assimilator in state \n";
+      return;
+    }
+  }
+  if (!gs.assignProbe(UnitInstance::MINING_VESPENE)) {
+    std::cerr << "No probe available for mining \n";
+    return;
+  }
+}
+
+void Simulator::visite(BIAWaitGoal& e) {
+  gs.waitforAllUnitFree();
   e.setTime(gs.getTimeStamp());
 }
 
-
 void Simulator::execute() {
-  for (BIA*  bi : bo.getItems()) bi->accept(*this);
+  for (BIA* bi : bo.getItems()) bi->accept(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const Simulator& simu) {

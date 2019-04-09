@@ -19,6 +19,7 @@ class Simulator : public BIOVisitor {
  public:
   Simulator(BuildOrder& bo);
   virtual void visite(BIABuild& e) override;
+  virtual void visite(BIAMineVespene& e) override;
   virtual void visite(BIAWaitGoal& e) override;
   void execute();
 

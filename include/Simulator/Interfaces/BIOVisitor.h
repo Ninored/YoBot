@@ -3,11 +3,13 @@
 
 namespace suboo {
 class BIABuild;
+class BIAMineVespene;
 class BIAWaitGoal;
 
 class BIOVisitor {
  public:
   virtual void visite(BIABuild& e) = 0;
+  virtual void visite(BIAMineVespene& e) = 0;
   virtual void visite(BIAWaitGoal& e) = 0;
 };
 }  // namespace suboo
