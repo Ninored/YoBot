@@ -98,6 +98,8 @@ namespace suboo {
 		int getAvailableSupply() const;
 		int getUsedSupply() const;
 		int getMaxSupply() const;
+		int getSupply() { return supply; }
+		void setSupply(int newSupply) { supply = newSupply; }
 		void stepForward(int secs);
 		bool waitForResources(int mins, int vesp, std::pair<int,int> * waited = nullptr);
 		bool waitforUnitCompletion(UnitId id);

@@ -1,9 +1,14 @@
-file(GLOB TechTreeTests_SOURCES TechTreeTests/*.cpp TechTreeTests/*.hpp)
+file(GLOB TechTreeTests_SOURCES TechTreeTests/*.cpp TechTreeTests/*.h)
 
 set(CMAKE_CXX_FLAGS_RELEASE "/MT")
 set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
 include_directories(.)
 
+# Configure output directories
+add_executable("test-TechTree" ${TechTreeTests_SOURCES})
+target_link_libraries("test-TechTree" 
+	PRIVATE TechTreeLib 
+)
 
-add_executable(TechTreeTests ${TechTreeTests_SOURCES})
-target_link_libraries(TechTreeTests TechTreeLib)
+add_test( NAME TechTreeTests COMMAND "test-TechTree")
+

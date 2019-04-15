@@ -216,44 +216,6 @@ namespace suboo {
 		return best;
 	}
 
-	/*
-	//dans cette version, on ne se sert plus du fastoptimizer vu que la plupart de ses opérations ont déjà été traités
-	BuildOrder BOBuilder::improveBO(const BuildOrder & bo, int depth)
-	{
-		std::vector<pboo> optimizers;
-		optimizers.emplace_back(new NoWaitShifter());
-		optimizers.emplace_back(new AddMineralGathererStack());
-		optimizers.emplace_back(new AddProductionForceful());
-		optimizers.emplace_back(new AddMineralGatherer());
-		optimizers.emplace_back(new AddProduction());
-		optimizers.emplace_back(new LeftShifter());
-		optimizers.emplace_back(new RemoveExtra());
-		optimizers.emplace_back(new AddVespeneGatherer());
-
-
-		if (depth == 0)
-			return bo;
-		//
-		BuildOrder best = bo;
-		int gain = 0;
-		do {
-			gain = 0;
-
-			for (auto & p : optimizers) {
-				int optgain = 0;
-				auto res = p->improve(best, depth);
-				if (res.first > 0) {
-					gain += res.first;
-					optgain += res.first;
-					best = res.second;
-					std::cout << "Improved results using " << p->getName() << " by " << res.first << " delta. Current best timing :" << best.getFinal().getTimeStamp() << "s at depth " << depth << std::endl;
-					//best.print(std::cout);
-				}
-			}
-		} while (gain > 0);
-
-		return best;
-	}*/
 
 	bool timeBO(BuildOrder & bo) {
 		auto & tech = TechTree::getTechTree();

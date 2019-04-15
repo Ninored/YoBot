@@ -2,8 +2,9 @@
 #include "sc2api/sc2_action.h"
 #include "sc2api/sc2_interfaces.h"
 #include "UnitTypes.h"
-#include "MapTopology.h"
-#include "Placement.h"
+// TODO: A supprimer
+//#include "MapTopology.h"
+//#include "Placement.h"
 #include <iostream>
 #include <fstream>
 
@@ -19,6 +20,7 @@ bool isRelevant(const sc2::UnitTypeData & unitdesc, const std::unordered_map<int
 
 void suboo::TechBot::OnGameStart()
 {
+  /*
 	
 	auto & types = Observation()->GetUnitTypeData();
 	auto & abilities = Observation()->GetAbilityData();
@@ -42,11 +44,13 @@ void suboo::TechBot::OnGameStart()
 	Debug()->DebugGiveAllUpgrades();
 	initmin = Observation()->GetMinerals();
 	initvesp = Observation()->GetVespene();
-	auto point = map.getPosition(map.ally,map.main);
+//	auto point = map.getPosition(map.ally,map.main);
+	auto point = Observation()->GetGameInfo().start_locations[0]; // A la place de map
 	for (const sc2::UnitTypeData & unitdesc : types) {
 		if (isRelevant(unitdesc, {})) {
 			point = point + sc2::Point3D(3, 0, 0);
-			while (! placer.PlacementB(info, point,3)) {
+			while (! Query()->Placement(sc2::ABILITY_ID::BUILD_GATEWAY, point)){
+//			while (! placer.PlacementB(info, point,3)) {
 				point = point + sc2::Point3D(3, 0, 0);
 				if (point.x >= info.width) {
 					point = sc2::Point3D(0, point.y + 3, 0);
@@ -62,12 +66,13 @@ void suboo::TechBot::OnGameStart()
 		}
 	}
 	Debug()->SendDebug();
-
+  */
 
 }
 
 void suboo::TechBot::OnStep()
 {
+  /*
 	if (Observation()->GetGameLoop() == 5) {
 
 		auto & types = Observation()->GetUnitTypeData();
@@ -186,4 +191,5 @@ void suboo::TechBot::OnStep()
 		out << "} //end ns \n";
 		out.close();
 	}
+  */
 }

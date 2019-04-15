@@ -1,0 +1,405 @@
+#include "BuildOrder/BOBuilder.h"
+#include <iostream>
+#include <unordered_set>
+#include "BuildOrder/UnitTypes.h"
+#include "BuildOrder/boo.h"
+#include "BuildOrder/GameState.h"
+
+namespace suboo {
+
+BuildOrder BOBuilder::makeBOFromGoal() {
+  auto& tech = TechTree::getTechTree().getMap();
+  BuildOrder bo;
+  // make the basic thing : list of creation order of each desired units x qty
+  for (auto& goal : goals) {
+    for (auto& target : goal.getMap()) {
+      int qty = target.second;
+      while (qty-- > 0) {
+        bo.addItem(target.first);
+      }
+    }
+  }
+  return bo;
+}
+
+void addPreReq(std::vector<BuildItem>& pre, GameState& state,
+               std::unordered_set<int>& seen, UnitId target,
+               const TechTree& tech) {
+  auto& unit = tech.getUnit(target);
+  if ((int)unit.prereq != 0) {
+    if (!state.hasFinishedUnit(unit.prereq)) {
+      addPreReq(pre, state, seen, unit.prereq, tech);
+    }
+  }
+  if ((int)unit.builder != 0) {
+    if (!state.hasFreeUnit(unit.builder)) {
+      addPreReq(pre, state, seen, unit.builder, tech);
+    }
+  }
+  // food
+  auto soup = state.getAvailableSupply();
+  if (unit.food_provided < 0 && soup < -unit.food_provided) {
+    pre.push_back({sc2::UNIT_TYPEID::PROTOSS_PYLON});
+    state.addUnit(sc2::UNIT_TYPEID::PROTOSS_PYLON);
+  }
+  // vespene
+  if (unit.vespene_cost > 0 &&
+      !state.hasFinishedUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR)) {
+    pre.push_back({sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR});
+    state.addUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
+    pre.push_back(BuildItem::TRANSFER_VESPENE);
+  }
+  pre.push_back(unit.id);
+  state.addUnit(unit.id);
+  seen.insert(unit.id);
+}
+
+bool BOBuilder::enforcePrereqBySwap(BuildOrder& bo) {
+  auto& tech = TechTree::getTechTree();
+  // enforce prerequisites
+  GameState state{tech.getInitialUnits(), tech.getInitialMinerals(),
+                  tech.getInitialVespene()};
+  BuildOrder bopre;
+  std::unordered_set<int> seen;
+  for (auto& u : state.getFreeUnits()) {
+    seen.insert(u.type);
+  }
+  for (auto& u : state.getBusyUnits()) {
+    seen.insert(u.type);
+  }
+  int sz = bo.getItems().size();
+  for (int i = 0; i < bo.getItems().size() && i >= 0; i++) {
+    auto& bi = bo.getItems()[i];
+    if (bi.getAction() == BuildItem::BUILD) {
+      auto target = bi.getTarget();
+      auto& unit = tech.getUnit(target);
+      // unit prereq
+      std::vector<BuildItem> pre;
+      addPreReq(pre, state, seen, unit.id, tech);
+
+      for (auto& id : pre) {
+        int j, e;
+        for (j = i, e = bo.getItems().size(); j < e; j++) {
+          if (bo.getItems()[j] == BuildItem(id) ||
+              (id == sc2::UNIT_TYPEID::PROTOSS_PYLON &&
+               bo.getItems()[j] == sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+            bo.removeItem(j);
+            if (i == j) {
+              i--;
+            }
+            break;
+          }
+        }
+        if (j == e) {
+          return false;
+        }
+        bopre.addItem(id);
+        if (id == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
+          auto bbi = BuildItem(BuildItem::TRANSFER_VESPENE);
+          for (j = std::max(0, i), e = bo.getItems().size(); j < e; j++) {
+            if (bo.getItems()[j] == bbi) {
+              bo.removeItem(j);
+              if (i == j) {
+                i--;
+              }
+              break;
+            }
+          }
+          if (j == e) {
+            return false;
+          }
+          bopre.addItem(bbi.getAction());
+        }
+      }
+    } else {
+      bopre.addItem(bi.getAction());
+    }
+  }
+  bo = bopre;
+  return true;
+}
+
+BuildOrder BOBuilder::enforcePrereq(const BuildOrder& bo) {
+  auto& tech = TechTree::getTechTree();
+  // enforce prerequisites
+  GameState state{tech.getInitialUnits(), tech.getInitialMinerals(),
+                  tech.getInitialVespene()};
+  BuildOrder bopre;
+  std::unordered_set<int> seen;
+  for (auto& u : state.getFreeUnits()) {
+    seen.insert(u.type);
+  }
+  for (auto& u : state.getBusyUnits()) {
+    seen.insert(u.type);
+  }
+  int vesp = 0;
+  for (auto& bi : bo.getItems()) {
+    if (bi.getAction() == BuildItem::BUILD) {
+      auto target = bi.getTarget();
+      auto& unit = tech.getUnit(target);
+      // unit prereq
+      std::vector<BuildItem> pre;
+      addPreReq(pre, state, seen, unit.id, tech);
+
+      for (auto& id : pre) {
+        bopre.addItem(id);
+      }
+    } else {
+      if (state.countUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) >= vesp) {
+        bopre.addItem(bi.getAction());
+        vesp++;
+      }
+    }
+  }
+  return bopre;
+}
+
+BuildOrder BOBuilder::computeBO() {
+  BuildOrder bo = makeBOFromGoal();
+  bo = enforcePrereq(bo);
+  timeBO(bo);
+  return bo;
+}
+
+BuildOrder BOBuilder::improveBO(const BuildOrder& bo, int depth) {
+  std::vector<pboo> optimizers;
+  std::vector<pboo> fastoptimizers;
+  optimizers.emplace_back(new NoWaitShifter());
+  fastoptimizers.emplace_back(new NoWaitShifter());
+  optimizers.emplace_back(new AddMineralGathererStack());
+  optimizers.emplace_back(new AddProductionForceful());
+  optimizers.emplace_back(new AddMineralGatherer());
+  optimizers.emplace_back(new AddProduction());
+  optimizers.emplace_back(new LeftShifter());
+  fastoptimizers.emplace_back(new LeftShifter());
+  fastoptimizers.emplace_back(new RemoveExtra());
+  optimizers.emplace_back(new AddVespeneGatherer());
+
+  if (depth == 0) return bo;
+  //
+  BuildOrder best = bo;
+  int gain = 0;
+  do {
+    gain = 0;
+
+    for (auto& p : optimizers) {
+      int optgain = 0;
+      // nested loop mostly does not help, most rules already try many positions
+      // it's redundant
+      auto res = p->improve(best, depth);
+      if (res.first > 0) {
+        gain += res.first;
+        optgain += res.first;
+        best = res.second;
+        /*std::cout << "Improved results using " << p->getName() << " by "
+                  << res.first << " delta. Current best timing :"
+                  << best.getFinal().getTimeStamp() << "s at depth " << depth
+                  << std::endl;*/
+        // best.print(std::cout);
+      } else {
+        // std::cout << "No improvement of results using " << p->getName() << ".
+        // Current best timing :" << best.getFinal().getTimeStamp() << "s" <<
+        // std::endl;
+      }
+      do {
+        optgain = 0;
+
+        for (auto& p : fastoptimizers) {
+          auto res = p->improve(best, depth);
+          if (res.first > 0) {
+            gain += res.first;
+            optgain += res.first;
+            best = res.second;
+            /*            std::cout << "Improved results (fast) using " <<
+               p->getName()
+                                  << " by " << res.first << " delta. Current
+               best timing :"
+                                  << best.getFinal().getTimeStamp() << "s at
+               depth "
+                                  << depth << std::endl;
+                                  */
+            // best.print(std::cout);
+          }
+        }
+      } while (optgain > 0);
+    }
+  } while (gain > 0);
+
+  return best;
+}
+
+bool timeBO(BuildOrder& bo) {
+  auto& tech = TechTree::getTechTree();
+  // bo = addPower(bo);
+  // at this point BO should be doable.
+  // simulate it for timing
+  GameState gs{tech.getInitialUnits(), tech.getInitialMinerals(),
+               tech.getInitialVespene()};
+  for (auto& bi : bo.getItems()) {
+    bi.clearTimes();
+    int cur = gs.getTimeStamp();
+    // std::cout << "On :"; bi.print(std::cout); std::cout << std::endl;
+    if (bi.getAction() == BuildItem::BUILD) {
+      auto& u = tech.getUnit(bi.getTarget());
+      std::pair<int, int> waited;
+      if (!gs.waitForResources(u.mineral_cost, u.vespene_cost, &waited)) {
+        // std::cout << "Insufficient resources collection in state \n";
+        gs.print(std::cout);
+        return false;
+      } else {
+        bi.timeMin = waited.first;
+        bi.timeVesp = waited.second;
+      }
+      if ((int)u.prereq != 0 && !gs.hasFinishedUnit(u.prereq)) {
+        if (!gs.waitforUnitCompletion(u.prereq)) {
+          // std::cout << "Insufficient requirements missing tech req :"
+          //          << tech.getUnit(u.prereq).name << std::endl;
+          gs.print(std::cout);
+          return false;
+        }
+        bi.timePre = gs.getTimeStamp() - cur;
+      }
+      if (u.builder != sc2::UNIT_TYPEID::INVALID) {
+        if (!gs.hasFreeUnit(u.builder)) {
+          if (!gs.waitforUnitFree(u.builder)) {
+            // std::cout << "Insufficient requirements missing builder :"
+            //           << tech.getUnit(u.builder).name << std::endl;
+            gs.print(std::cout);
+            return false;
+          }
+          bi.timeFree = gs.getTimeStamp() - cur;
+        }
+        if (u.action_status == u.TRAVELLING) {
+          gs.assignFreeUnit(u.builder, UnitInstance::BUSY, u.travel_time);
+        } else if (u.action_status == u.BUSY) {
+          gs.assignFreeUnit(u.builder, UnitInstance::BUSY, u.production_time);
+        }
+      }
+
+      if (u.food_provided < 0 && gs.getAvailableSupply() < -u.food_provided) {
+        if (!gs.waitforFreeSupply(-u.food_provided)) {
+          // std::cout << "Insufficient food missing pylons." << std::endl;
+          // gs.print(std::cout);
+          return false;
+        }
+        bi.timeFood = gs.getTimeStamp() - cur;
+      }
+      gs.getMinerals() -= u.mineral_cost;
+      gs.getVespene() -= u.vespene_cost;
+      gs.addUnit(
+          UnitInstance(u.id, UnitInstance::BUILDING,
+                       TechTree::getTechTree().getUnit(u.id).production_time));
+    } else if (bi.getAction() == BuildItem::TRANSFER_MINERALS) {
+    } else if (bi.getAction() == BuildItem::TRANSFER_VESPENE) {
+      bi.timeFree = 0;
+      auto prereq = sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
+      if (!gs.hasFreeUnit(prereq)) {
+        int cur = gs.getTimeStamp();
+        if (!gs.waitforUnitCompletion(prereq)) {
+          std::cout << "No assimilator in state \n";
+          gs.print(std::cout);
+          return false;
+        }
+        bi.timeFree = gs.getTimeStamp() - cur;
+      }
+      int gas = 0;
+      int soongas = 0;
+
+      int vcount = 0;
+      for (auto& u : gs.getFreeUnits()) {
+        if (u.state == UnitInstance::MINING_VESPENE) {
+          vcount++;
+        } else if (u.type == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR &&
+                   u.state == UnitInstance::FREE) {
+          gas++;
+        }
+      }
+      for (auto& u : gs.getBusyUnits()) {
+        if (u.state == UnitInstance::MINING_VESPENE) {
+          vcount++;
+        } else if (u.type == sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR) {
+          soongas++;
+        }
+      }
+
+      if (vcount >= 3 * (gas + soongas)) {
+        std::cout << "Gas over saturated skipping \n";
+        // gs.print(std::cout);
+        return false;
+      }
+      if (vcount >= 3 * gas) {
+        if (!gs.waitforUnitCompletion(prereq)) {
+          std::cout << "No assimilator in state \n";
+          gs.print(std::cout);
+          return false;
+        }
+        bi.timeFree += gs.getTimeStamp() - cur;
+      }
+      if (!gs.assignProbe(UnitInstance::MINING_VESPENE)) {
+        std::cout << "No probe available for mining \n";
+        gs.print(std::cout);
+        return false;
+      }
+    } else if (bi.getAction() == BuildItem::WAIT_GOAL) {
+      auto cur = gs.getTimeStamp();
+      // finalize build : free all units
+      if (!gs.waitforAllUnitFree()) {
+        std::cout << "Could not free all units \n";
+        gs.print(std::cout);
+        return false;
+      }
+      bi.timeFree = gs.getTimeStamp() - cur;
+    }
+	else if (bi.getAction() == CHRONO) {
+
+		auto & fu = gs.getFreeUnits();
+		auto & bu = gs.getBusyUnits();
+
+		for (auto & ui : fu) {
+			if (ui.type == UnitId::PROTOSS_NEXUS) {
+				if (ui.energy >= 50) {
+					auto & uitmp = bu.front();;
+					for (auto & uitarget : bu) {
+						if (gs.getSupply() >= uitarget.supply && (tech.getUnitById(bi.getTarget()).builder == uitarget.type || uitarget.type == bi.getTarget())) {
+							if (uitmp.time_to_free < uitarget.time_to_free) {
+								uitmp = uitarget;
+							}
+						}
+					}
+					std::cout << "time_to_free : " << uitmp.time_to_free << std::endl;
+					if (uitmp.time_to_free > 20) {
+						uitmp.time_to_free -= 10;
+					}
+					else {
+						uitmp.time_with_chrono = 20 - uitmp.time_to_free; //on enleve aux temps des autres cases une val = à twc * 1.5
+						uitmp.time_to_free -= uitmp.time_to_free / 2;
+					}
+					gs.setSupply(gs.getSupply() - uitmp.supply);
+				
+					std::cout << "time_to_free after: " << uitmp.time_to_free << std::endl;
+				
+				}
+				ui.energy -= 50;
+			}
+		}
+	}
+    bi.setTime(gs.getTimeStamp());
+  }
+
+  if (bo.getItems().empty() || bo.getItems().back().getAction() != BuildItem::WAIT_GOAL) {
+    auto cur = gs.getTimeStamp();
+    // finalize build : free all units
+    if (!gs.waitforAllUnitFree()) {
+      std::cout << "Could not free all units \n";
+      gs.print(std::cout);
+      return false;
+    }
+    auto bifin = BuildItem(BuildItem::WAIT_GOAL);
+    bifin.timeFree = gs.getTimeStamp() - cur;
+    bo.getItems().push_back(bifin);
+  }
+  bo.getFinal() = gs;
+  return true;
+}
+
+}  // namespace suboo

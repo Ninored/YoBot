@@ -6,7 +6,11 @@
 #include "LadderInterface.h"
 
 //#define _GENTECHTREE 1
+<<<<<<< HEAD
 //#define _BOSEARCH 1
+=======
+#define _BOSEARCH 1
+>>>>>>> 750460b439f00ad78a25726cc516ae3433f3b18a
 //#define _SELFPLAY 1
 //#define _RELEASE 1
 //#undef _RELEASE
@@ -23,7 +27,7 @@ int main(int argc, char* argv[])
 	if (!coordinator.LoadSettings(argc, argv))
 	{
 		std::cout << "Unable to find or parse settings." << std::endl;
-		return 1;
+		return -1;
 	}
 	auto path = coordinator.GetExePath();
 	std::smatch matched;
@@ -130,6 +134,28 @@ using namespace suboo;
 
 int main(int argc, char* argv[])
 {
+
+  BuildOrder boo;
+
+  /* 
+  boo.addItem(UnitId::PROTOSS_PYLON);
+  boo.addItem(UnitId::PROTOSS_GATEWAY);
+  boo.addItem(UnitId::PROTOSS_ZEALOT);
+  */
+
+  boo.addItem(UnitId::PROTOSS_PYLON);
+  boo.addItem(UnitId::PROTOSS_GATEWAY);
+  boo.addItem(UnitId::PROTOSS_ASSIMILATOR);
+  boo.addItem(TRANSFER_VESPENE);
+  boo.addItem(UnitId::PROTOSS_CYBERNETICSCORE);
+  boo.addItem(UnitId::PROTOSS_STARGATE);
+  boo.addItem(UnitId::PROTOSS_PHOENIX);
+
+  timeBO(boo);
+  boo.print(std::cout);
+
+  return 0;
+
 	BOBuilder builder;
 
 	BuildGoal goal(0); // ASAP
