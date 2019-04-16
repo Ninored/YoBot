@@ -23,6 +23,17 @@ void Simulator::visite(BIABuild& e) {
   if (u.prereq != 0 && !gs.hasFreeUnit(u.prereq)) {
     gs.waitforUnitCompletion(u.prereq);
   }
+
+  //ressources
+  if (u.mineral_cost > gs.getMinerals() && u.vespene_cost > gs.getVespene()) {
+	  gs.waitForResources(u.mineral_cost, u.vespene_cost, nullptr);
+  }
+
+  //nourriture
+  if (u.food_provided > gs.getMaxSupply()) {
+	  gs.waitforFreeSupply(u.food_provided - gs.getMaxSupply());
+  }
+
   /* Builder */
   if (!gs.hasFreeUnit(u.builder)) {
     gs.waitforUnitFree(u.builder);
@@ -34,6 +45,7 @@ void Simulator::visite(BIABuild& e) {
   }
   gs.getMinerals() -= u.mineral_cost;
   gs.getVespene() -= u.vespene_cost;
+  gs.getSupply() -= u.food_provided;
   gs.addUnit(UnitInstance(u.id, UnitInstance::BUILDING, u.production_time));
 
   e.setTime(gs.getTimeStamp());
