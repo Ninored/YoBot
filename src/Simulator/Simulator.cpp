@@ -32,6 +32,16 @@ void Simulator::visite(BIABuild& e) {
       gs.assignFreeUnit(u.builder, UnitInstance::BUSY, u.production_time);
     }
   }
+
+  if (u.food_provided < 0 && gs.getAvailabelSupply() < -u.food_provided) {
+    if (!gs.waitforFreeSupply(-u.food_provided)) {
+      std::cout << "Insufficient food missing pylons." << std::endl;
+      // gs.print(std::cout);
+      return;
+    }
+    //bi.timeFood = gs.getTimeStamp() - cur;
+  }
+
   gs.getMinerals() -= u.mineral_cost;
   gs.getVespene() -= u.vespene_cost;
   gs.addUnit(UnitInstance(u.id, UnitInstance::BUILDING, u.production_time));
@@ -84,13 +94,58 @@ void Simulator::visite(BIAMineVespene& e) {
   }
 }
 
+void Simulator::visite(BIAChronoboost& e) {
+  std::cout << "[CHRONOBOOST]" << std::endl;
+
+  auto& fu = gs.getFreeUnits();
+  auto& bu = gs.getBusyUnits();
+
+  auto tt = TechTree::getTechTree();
+  auto u = tt.getUnit(e.getTarget());
+
+  UnitId target = e.getTarget();
+  UnitId builder = u.builder;
+
+  /* Search Nexus */
+  auto nexus = std::find_if(fu.begin(), fu.end(), [](auto& u) {
+    return u.type == sc2::UNIT_TYPEID::PROTOSS_NEXUS;
+  });
+  if (nexus == fu.end()) {
+    std::cerr << "No nexus available for Chronoboost" << std::endl;
+    return;
+  }
+  if (nexus->energy < 50) {
+    std::cerr << "No energy in nexus" << std::endl;
+    return;
+  }
+
+  /* Search target */
+  auto concret_target = std::find_if(
+      bu.begin(), bu.end(), [target](auto& u) { return u.type == target; });
+  if (concret_target == bu.end()) {
+    std::cerr << "No target available" << std::endl;
+    return;
+  }
+
+  auto concret_builder = std::find_if(
+      bu.begin(), bu.end(), [builder](auto& u) { return u.type == builder; });
+  if (concret_builder == bu.end()) {
+    std::cerr << "No builder available" << std::endl;
+    return;
+  }
+
+  nexus->energy -= 50;
+  concret_builder->time_with_chronoboost = 20;
+  concret_target->time_with_chronoboost = 20;
+}
+
 void Simulator::visite(BIAWaitGoal& e) {
   gs.waitforAllUnitFree();
   e.setTime(gs.getTimeStamp());
 }
 
 void Simulator::execute() {
-  for (BIA* bi : bo.getItems()) bi->accept(*this);
+  for (const auto& bi : bo.getItems()) bi.get()->accept(*this);
 }
 
 std::ostream& operator<<(std::ostream& os, const Simulator& simu) {

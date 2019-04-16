@@ -22,7 +22,6 @@ class GameState {
 
   int supply;
 
-
   void calculateMps();
   void calculateVps();
   void calculateSupply();
@@ -43,8 +42,8 @@ class GameState {
   float getMps() const;
   float& getVespene();
   float getVps() const;
-  const std::vector<UnitInstance>& getFreeUnits() const;
-  const std::vector<UnitInstance>& getBusyUnits() const;
+  std::vector<UnitInstance>& getFreeUnits();
+  std::vector<UnitInstance>& getBusyUnits();
   
   // Set
   void setFree(std::vector<UnitInstance>::iterator& it);

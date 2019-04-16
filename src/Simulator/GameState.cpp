@@ -35,8 +35,22 @@ void GameState::calculateSupply() {
   supply = 0;
   auto& tech = TechTree::getTechTree();
 
-  for (auto& u : freeUnits) supply += tech.getUnit(u.type).food_provided;
-  for (auto& u : busyUnits) supply += tech.getUnit(u.type).food_provided;
+  for (auto& u : freeUnits) {
+    if (tech.getUnit(u.type).food_provided < 0) {
+				supply += tech.getUnit(u.type).food_provided;
+		}
+		else if (u.state != u.BUILDING) {
+				supply += tech.getUnit(u.type).food_provided;
+		}
+  }
+  for (auto& u : busyUnits) {
+    if (tech.getUnit(u.type).food_provided < 0) {
+				supply += tech.getUnit(u.type).food_provided;
+		}
+		else if (u.state != u.BUILDING) {
+				supply += tech.getUnit(u.type).food_provided;
+		}
+  }
 }
 // Mutate State
 /* By default add the unit to free list */
@@ -65,19 +79,34 @@ bool GameState::addUnit(const UnitInstance& unit) {
 // Step function
 void GameState::step(int sec) {
   for (int i = 0; i < sec; ++i) {
+    float sumtime = 0;
     for (auto it = busyUnits.begin(); it != busyUnits.end(); /* NA */) {
-      it->time_to_free--;
+      /* Add energy */
+      if (it->energy < 200) {
+        it->energy += 0.7875;
+      }
+      /*Check time with chrono*/
+      if (it->time_with_chronoboost > 0) {
+        it->time_with_chronoboost--;
+        it->time_to_free -= 1.5;
+      } else {
+        it->time_to_free--;
+      }
+
       if (it->time_to_free <= 0) {
         if (!sc2util::IsWorkerType(it->type))
           it->state = it->FREE;
         else
           it->state = it->MINING_MINERALS;
 
+        sumtime += it->time_to_free;
         setFree(it);
       } else {
+        sumtime += it->time_to_free;
         ++it;
       }
     }
+    if (sumtime <= 0) break;
 
     minerals += getMps();
     vespenes += getVps();
@@ -93,12 +122,8 @@ float& GameState::getMinerals() { return minerals; }
 float GameState::getMps() const { return mps; }
 float& GameState::getVespene() { return vespenes; }
 float GameState::getVps() const { return vps; }
-const std::vector<UnitInstance>& GameState::getFreeUnits() const {
-  return freeUnits;
-}
-const std::vector<UnitInstance>& GameState::getBusyUnits() const {
-  return busyUnits;
-}
+std::vector<UnitInstance>& GameState::getFreeUnits() { return freeUnits; }
+std::vector<UnitInstance>& GameState::getBusyUnits() { return busyUnits; }
 
 // SET
 void GameState::setFree(std::vector<UnitInstance>::iterator& it) {
@@ -111,6 +136,7 @@ void GameState::setBusy(std::vector<UnitInstance>::iterator& it) {
 }
 
 // Mutate unit
+/* Add alternative to assign prob to Minerales */
 bool GameState::assignProbe(UnitInstance::UnitState state) {
   int max = 3;
   for (auto it = freeUnits.begin(); it != freeUnits.end(); /* NA */) {
@@ -160,7 +186,7 @@ bool GameState::waitforUnitCompletion(UnitId id) {
   });
   if (it == busyUnits.end()) return false;
 
-  std::cout << "[waitforUnitCompletio] wait for" << (int)id
+  std::cout << "[waitforUnitCompletion] wait for ( " << (int)id
             << "): " << it->time_to_free << std::endl;
   step(it->time_to_free);
   return true;
@@ -182,12 +208,48 @@ bool GameState::waitforUnitFree(UnitId id) {
   return true;
 }
 
-bool GameState::waitforFreeSupply(int nedded) { 
-  std::cerr << "[TO IMPLEMENT]" << std::endl;  
-  return true; 
+bool GameState::waitforFreeSupply(int nedded) {
+
+  int cur = getAvailabelSupply();
+
+  if (cur >= nedded) {
+    return true;
+  }
+
+  auto it = std::find_if(busyUnits.begin(), busyUnits.end(), [](auto& u) {
+    return u.type == sc2::UNIT_TYPEID::PROTOSS_PYLON ||
+           u.type == sc2::UNIT_TYPEID::PROTOSS_NEXUS && u.state != u.FREE;
+  });
+  if (it == busyUnits.end()) {
+    return false;
+  }
+  int index = 0;
+  int best = -1;
+  for (auto& u : busyUnits) {
+    if (u.state == u.BUILDING &&
+        (u.type == sc2::UNIT_TYPEID::PROTOSS_PYLON || u.type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+      if (best == -1 || busyUnits[best].time_to_free > u.time_to_free) {
+        best = index;
+      }
+    }
+    index++;
+  }
+  if (best == -1) {
+    return false;
+  } else {
+    // std::cout << "Waited for " <<
+    // TechTree::getTechTree().getUnitById(units[best].type).name << " to be
+    // provide food for " << units[best].time_to_free << "s." << std::endl;
+    step(busyUnits[best].time_to_free);
+    return true;
+  }
+  std::cerr << "[TO IMPLEMENT]" << std::endl;
+  return true;
 }
 
 bool GameState::waitforAllUnitFree() {
+  // FIXME:
+
   int time_to_free = 0;
   for (auto u : busyUnits)
     if (time_to_free < u.time_to_free) time_to_free = u.time_to_free;
@@ -228,7 +290,8 @@ int GameState::probesToStauration() const { return 1; }
 
 std::ostream& operator<<(std::ostream& os, const GameState& state) {
   os << "[GS:" << state.timestamp << "]" << std::endl
-     << "\t(min: " << state.minerals << ", vesp: " << state.vespenes
+     << "\t[Supply]: " << state.supply << std::endl
+     << "\t[Minerals]: " << state.minerals << ", [Vespene]: " << state.vespenes
      << ", mps:" << state.mps << ", vps:" << state.vps << ")" << std::endl;
 
   os << "\t[freeUnits]: (";

@@ -58,12 +58,24 @@ class UnitInstance {
   enum UnitState { BUILDING, BUSY, MINING_MINERALS, MINING_VESPENE, FREE };
   UnitId type;
   UnitState state;
-  int time_to_free;
+  float time_to_free;
+  int time_with_chronoboost;
+  float energy;
 
-  UnitInstance(UnitId id) : type(id), state(FREE), time_to_free(0){};
+  UnitInstance(UnitId id)
+      : type(id),
+        state(FREE),
+        time_to_free(0),
+        time_with_chronoboost(0),
+        energy(50.0){};
   UnitInstance(UnitId id, UnitState state, int time)
-      : type(id), state(state), time_to_free(time){};
+      : type(id),
+        state(state),
+        time_to_free(time),
+        time_with_chronoboost(0),
+        energy(50.0){};
 
+  /*
   void print(std::ostream& out) const;
 
   std::string print_status() const {
@@ -82,6 +94,7 @@ class UnitInstance {
         return "-";
     }
   }
+  */
 };
 
 /**

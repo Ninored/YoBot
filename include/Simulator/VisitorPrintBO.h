@@ -17,8 +17,8 @@ class PrintBo : public BIOVisitor {
 
  public:
   PrintBo(BuildOrder& cc) : tt(TechTree::getTechTree()), bo(cc) {
-    for (const auto i : bo.getItems()) {
-      i->accept(*this);
+    for (const auto& i : bo.getItems()) {
+      i.get()->accept(*this);
     }
   }
 
@@ -29,15 +29,20 @@ class PrintBo : public BIOVisitor {
 
   virtual void visite(BIABuild& e) override {
     const Unit& u = tt.getUnit(e.getTarget());
-    ss << "[BUILD]" << u.name << " " << e.getTime() << " s" << std::endl;
+    ss << "\t[BUILD]" << u.name << " " << e.getTime() << " s" << std::endl;
   }
 
   virtual void visite(BIAMineVespene& e) override {
-    ss << "[Mine Vespene]" << std::endl;
+    ss << "\t[Mine Vespene]" << std::endl;
   }
 
   virtual void visite(BIAWaitGoal& e) override {
-    ss << "[WaitGoal] " << e.getTime() << " s" << std::endl;
+    ss << "\t[WaitGoal] " << e.getTime() << " s" << std::endl;
+  }
+
+  virtual void visite(BIAChronoboost& e) override {
+    const Unit& u = tt.getUnit(e.getTarget());
+    ss << "\t[Chronoboost]" << u.name << " " << e.getTime() << " s" << std::endl;
   }
 };
 

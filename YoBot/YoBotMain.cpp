@@ -139,6 +139,12 @@ int main(int argc, char* argv[])
   boo.addItem(UnitId::PROTOSS_ZEALOT);
   */
 
+  boo.addItem(UnitId::PROTOSS_GATEWAY);
+  boo.addItem(UnitId::PROTOSS_PYLON);
+  boo.addItem(UnitId::PROTOSS_ZEALOT);
+  boo.addItem(UnitId::PROTOSS_ZEALOT);
+  boo.addItem(UnitId::PROTOSS_ZEALOT);
+  /*
   boo.addItem(UnitId::PROTOSS_PYLON);
   boo.addItem(UnitId::PROTOSS_GATEWAY);
   boo.addItem(UnitId::PROTOSS_ASSIMILATOR);
@@ -146,7 +152,7 @@ int main(int argc, char* argv[])
   boo.addItem(UnitId::PROTOSS_CYBERNETICSCORE);
   boo.addItem(UnitId::PROTOSS_STARGATE);
   boo.addItem(UnitId::PROTOSS_PHOENIX);
-
+  */
   timeBO(boo);
   boo.print(std::cout);
 
