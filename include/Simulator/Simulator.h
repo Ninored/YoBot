@@ -9,22 +9,19 @@
 namespace suboo {
 
 class Simulator : public BIOVisitor {
-  BuildOrder& bo;
-  GameState& gs;
+  GameState gs;
 
   // Metrics
   int timeMinerals;
   int timeVespene;
 
  public:
-  Simulator(BuildOrder& bo);
+  Simulator();
   virtual void visite(BIABuild& e) override;
   virtual void visite(BIAMineVespene& e) override;
-
   virtual void visite(BIAChronoboost& e) override;
-
   virtual void visite(BIAWaitGoal& e) override;
-  void execute();
+  GameState visite(BuildOrder& bo);
 
   friend std::ostream& operator<<(std::ostream& os, const Simulator& simu);
 };

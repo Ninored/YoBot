@@ -30,3 +30,22 @@ target_include_directories(Simulator
 )
 target_link_libraries(Simulator PUBLIC TechTreeLib)
 target_compile_features(Simulator PRIVATE cxx_std_17)
+
+
+##### Optimizer
+file(GLOB_RECURSE optimizer_sources
+	${PROJECT_SOURCE_DIR}/src/Simulator/*.cpp
+	${PROJECT_SOURCE_DIR}/src/Simulator/*.h
+	${PROJECT_SOURCE_DIR}/src/Optimizer/*.cpp
+	${PROJECT_SOURCE_DIR}/src/Optimizer/*.h
+)
+add_executable(Optimizer apps/Optimize.cpp ${optimizer_sources})
+target_include_directories(Optimizer
+	PUBLIC ${PROJECT_SOURCE_DIR}/include
+	PUBLIC ${PROJECT_SOURCE_DIR}/src/Optimizer
+)
+target_link_libraries(Optimizer PUBLIC TechTreeLib)
+target_compile_features(Optimizer PRIVATE cxx_std_17)
+
+
+

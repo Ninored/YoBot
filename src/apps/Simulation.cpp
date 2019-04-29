@@ -58,9 +58,8 @@ int main(int argc, char** argv) {
 
   std::cout << bo << std::endl;
 
-  Simulator simu(bo);
-  simu.execute();
-
+  Simulator simu;
+  std::cout << simu.visite(bo) << std::endl;
   std::cout << simu << std::endl;
 
   _CrtDumpMemoryLeaks();

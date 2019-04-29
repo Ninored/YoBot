@@ -6,6 +6,12 @@ BuildOrder::BuildOrder(GameState init) : initial(init), final(init) {}
 BuildOrder::BuildOrder(GameState init, GameState fin)
     : initial(init), final(fin) {}
 
+BuildOrder::BuildOrder(const BuildOrder& b)
+    : initial(b.initial), final(b.final) {
+  for (const auto& i : b.items)
+    items.push_back(std::unique_ptr<BIA>(i.get()->clone()));
+}
+
 BuildOrder BuildOrder::clone() const {
   BuildOrder out(initial, final);
   for (const auto& i : items)
@@ -34,8 +40,6 @@ void BuildOrder::swapItem(int i, int j) { std::swap(items[i], items[j]); }
 void BuildOrder::moveFirst(int i) {}
 
 void BuildOrder::moveLast(int i) {}
-
-BuildOrder BuildOrder::operator=(const BuildOrder& b) { return this->clone(); }
 
 std::ostream& operator<<(std::ostream& os, const BuildOrder& bo) {
   os << "[BuildOrder]" << std::endl;

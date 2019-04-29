@@ -2,8 +2,8 @@
 
 namespace suboo {
 
-Simulator::Simulator(BuildOrder& bo)
-    : bo(bo), gs(bo.getFinalState()), timeMinerals(0), timeVespene(0) {}
+Simulator::Simulator()
+    : timeMinerals(0), timeVespene(0) {}
 
 void Simulator::visite(BIABuild& e) {
   auto tt = TechTree::getTechTree();
@@ -144,8 +144,10 @@ void Simulator::visite(BIAWaitGoal& e) {
   e.setTime(gs.getTimeStamp());
 }
 
-void Simulator::execute() {
-  for (const auto& bi : bo.getItems()) bi.get()->accept(*this);
+GameState Simulator::visite(BuildOrder& bo) {
+	for (const auto& bi : bo.getItems()) bi.get()->accept(*this);
+	gs = bo.getFinalState();
+	return gs;
 }
 
 std::ostream& operator<<(std::ostream& os, const Simulator& simu) {
@@ -157,7 +159,7 @@ std::ostream& operator<<(std::ostream& os, const Simulator& simu) {
      << "\t"
      << "timeVespene: " << simu.timeVespene << std::endl;
 
-  os << simu.bo << std::endl;
+  os << simu.gs << std::endl;
   return os;
 }
 

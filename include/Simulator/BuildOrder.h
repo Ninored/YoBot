@@ -16,6 +16,7 @@ class BuildOrder {
  public:
   BuildOrder(GameState init);
   BuildOrder(GameState init, GameState fin);
+  BuildOrder::BuildOrder(const BuildOrder& b);
   BuildOrder clone() const;
   void addItem(BIA* i);  // push end
   void pushFront(BIA* i);
@@ -26,7 +27,6 @@ class BuildOrder {
   void swapItem(int i, int j);
   void moveFirst(int i);
   void moveLast(int i);
-  BuildOrder operator=(const BuildOrder& b);
   friend std::ostream& operator<<(std::ostream& os, const BuildOrder& bo);
 };
 }  // namespace suboo
