@@ -37,19 +37,17 @@ void GameState::calculateSupply() {
 
   for (auto& u : freeUnits) {
     if (tech.getUnit(u.type).food_provided < 0) {
-				supply += tech.getUnit(u.type).food_provided;
-		}
-		else if (u.state != u.BUILDING) {
-				supply += tech.getUnit(u.type).food_provided;
-		}
+      supply += tech.getUnit(u.type).food_provided;
+    } else if (u.state != u.BUILDING) {
+      supply += tech.getUnit(u.type).food_provided;
+    }
   }
   for (auto& u : busyUnits) {
     if (tech.getUnit(u.type).food_provided < 0) {
-				supply += tech.getUnit(u.type).food_provided;
-		}
-		else if (u.state != u.BUILDING) {
-				supply += tech.getUnit(u.type).food_provided;
-		}
+      supply += tech.getUnit(u.type).food_provided;
+    } else if (u.state != u.BUILDING) {
+      supply += tech.getUnit(u.type).food_provided;
+    }
   }
 }
 // Mutate State
@@ -79,34 +77,31 @@ bool GameState::addUnit(const UnitInstance& unit) {
 // Step function
 void GameState::step(int sec) {
   for (int i = 0; i < sec; ++i) {
-    float sumtime = 0;
     for (auto it = busyUnits.begin(); it != busyUnits.end(); /* NA */) {
-      /* Add energy */
+      /* Add energy FIXME: on all units not only busy*/
       if (it->energy < 200) {
         it->energy += 0.7875;
       }
-      /*Check time with chrono*/
-      if (it->time_with_chronoboost > 0) {
-        it->time_with_chronoboost--;
-        it->time_to_free -= 1.5;
-      } else {
-        it->time_to_free--;
-      }
+      if (it->time_to_free > 0) {
+        /*Check time with chrono*/
+        if (it->time_with_chronoboost > 0) {
+          it->time_with_chronoboost--;
+          it->time_to_free -= 1.5;
+        } else {
+          it->time_to_free--;
+        }
 
-      if (it->time_to_free <= 0) {
-        if (!sc2util::IsWorkerType(it->type))
-          it->state = it->FREE;
-        else
-          it->state = it->MINING_MINERALS;
-
-        sumtime += it->time_to_free;
-        setFree(it);
-      } else {
-        sumtime += it->time_to_free;
-        ++it;
+        if (it->time_to_free <= 0) {
+          if (!sc2util::IsWorkerType(it->type))
+            it->state = it->FREE;
+          else
+            it->state = it->MINING_MINERALS;
+          setFree(it);
+        } else {
+          ++it;
+        }
       }
     }
-    if (sumtime <= 0) break;
 
     minerals += getMps();
     vespenes += getVps();
@@ -193,23 +188,24 @@ bool GameState::waitforUnitCompletion(UnitId id) {
 }
 bool GameState::waitforUnitFree(UnitId id) {
   /* Search builder */
-  auto it =
-      std::min_element(std::begin(busyUnits), std::end(busyUnits),
-                       [id](const UnitInstance& a, const UnitInstance& b) {
-                         return a.time_to_free < b.time_to_free;
-                       });
+  auto it = std::min_element(
+      std::begin(busyUnits), std::end(busyUnits),
+      [id](const UnitInstance& a, const UnitInstance& b) {
+        return a.time_to_free - (a.time_with_chronoboost * 1.5) <
+               b.time_to_free - (b.time_with_chronoboost * 1.5);
+      });
 
   if (it == busyUnits.end()) return false;
 
   std::cout << "[waitforUnitFree] wait for (" << (int)id
             << "): " << it->time_to_free << std::endl;
-  step(it->time_to_free);
+  // FIXME: we dont take in count the chronoboost.
+  step(it->time_to_free - (it->time_with_chronoboost * 1.5));
 
   return true;
 }
 
 bool GameState::waitforFreeSupply(int nedded) {
-
   int cur = getAvailabelSupply();
 
   if (cur >= nedded) {
@@ -226,8 +222,8 @@ bool GameState::waitforFreeSupply(int nedded) {
   int index = 0;
   int best = -1;
   for (auto& u : busyUnits) {
-    if (u.state == u.BUILDING &&
-        (u.type == sc2::UNIT_TYPEID::PROTOSS_PYLON || u.type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
+    if (u.state == u.BUILDING && (u.type == sc2::UNIT_TYPEID::PROTOSS_PYLON ||
+                                  u.type == sc2::UNIT_TYPEID::PROTOSS_NEXUS)) {
       if (best == -1 || busyUnits[best].time_to_free > u.time_to_free) {
         best = index;
       }
@@ -243,7 +239,6 @@ bool GameState::waitforFreeSupply(int nedded) {
     step(busyUnits[best].time_to_free);
     return true;
   }
-  std::cerr << "[TO IMPLEMENT]" << std::endl;
   return true;
 }
 

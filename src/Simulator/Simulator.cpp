@@ -2,8 +2,8 @@
 
 namespace suboo {
 
-Simulator::Simulator()
-    : timeMinerals(0), timeVespene(0) {}
+Simulator::Simulator(GameState& initial)
+    : timeMinerals(0), timeVespene(0), gs(initial) {}
 
 void Simulator::visite(BIABuild& e) {
   auto tt = TechTree::getTechTree();
@@ -35,11 +35,9 @@ void Simulator::visite(BIABuild& e) {
 
   if (u.food_provided < 0 && gs.getAvailabelSupply() < -u.food_provided) {
     if (!gs.waitforFreeSupply(-u.food_provided)) {
-      std::cout << "Insufficient food missing pylons." << std::endl;
-      // gs.print(std::cout);
-      return;
+      throw std::runtime_error("Insufficient food, missing pylons.");
     }
-    //bi.timeFood = gs.getTimeStamp() - cur;
+    // bi.timeFood = gs.getTimeStamp() - cur;
   }
 
   gs.getMinerals() -= u.mineral_cost;
@@ -54,8 +52,7 @@ void Simulator::visite(BIAMineVespene& e) {
   auto prereq = sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR;
   if (!gs.hasFreeUnit(prereq)) {
     if (!gs.waitforUnitCompletion(prereq)) {
-      std::cerr << "[ERROR] No assimilator in BuildOrder" << std::endl;
-      return;
+      throw std::runtime_error("[ERROR] No assimilator in BuildOrder");
     }
   }
   int gas = 0;
@@ -79,18 +76,15 @@ void Simulator::visite(BIAMineVespene& e) {
   }
 
   if (vcount >= 3 * (gas + soongas)) {
-    std::cerr << "Gas over saturated skipping \n";
-    return;
+    throw std::runtime_error("Gas over saturated skipping");
   }
   if (vcount >= 3 * gas) {
     if (!gs.waitforUnitCompletion(prereq)) {
-      std::cerr << "No assimilator in state \n";
-      return;
+      throw std::runtime_error("No assimilator in state");
     }
   }
   if (!gs.assignProbe(UnitInstance::MINING_VESPENE)) {
-    std::cerr << "No probe available for mining \n";
-    return;
+    throw std::runtime_error("No probe available for mining");
   }
 }
 
@@ -111,27 +105,23 @@ void Simulator::visite(BIAChronoboost& e) {
     return u.type == sc2::UNIT_TYPEID::PROTOSS_NEXUS;
   });
   if (nexus == fu.end()) {
-    std::cerr << "No nexus available for Chronoboost" << std::endl;
-    return;
+    throw std::runtime_error("No nexus available for Chronoboost");
   }
   if (nexus->energy < 50) {
-    std::cerr << "No energy in nexus" << std::endl;
-    return;
+    throw std::runtime_error("No energy in nexus");
   }
 
   /* Search target */
   auto concret_target = std::find_if(
       bu.begin(), bu.end(), [target](auto& u) { return u.type == target; });
   if (concret_target == bu.end()) {
-    std::cerr << "No target available" << std::endl;
-    return;
+    throw std::runtime_error("No target available");
   }
 
   auto concret_builder = std::find_if(
       bu.begin(), bu.end(), [builder](auto& u) { return u.type == builder; });
   if (concret_builder == bu.end()) {
-    std::cerr << "No builder available" << std::endl;
-    return;
+    throw std::runtime_error("No builder available");
   }
 
   nexus->energy -= 50;
@@ -145,9 +135,8 @@ void Simulator::visite(BIAWaitGoal& e) {
 }
 
 GameState Simulator::visite(BuildOrder& bo) {
-	for (const auto& bi : bo.getItems()) bi.get()->accept(*this);
-	gs = bo.getFinalState();
-	return gs;
+  for (const auto& bi : bo.getItems()) bi.get()->accept(*this);
+  return gs;
 }
 
 std::ostream& operator<<(std::ostream& os, const Simulator& simu) {

@@ -9,14 +9,13 @@
 namespace suboo {
 
 class Simulator : public BIOVisitor {
-  GameState gs;
-
+	GameState gs;
   // Metrics
   int timeMinerals;
   int timeVespene;
 
  public:
-  Simulator();
+  Simulator(GameState& inital);
   virtual void visite(BIABuild& e) override;
   virtual void visite(BIAMineVespene& e) override;
   virtual void visite(BIAChronoboost& e) override;

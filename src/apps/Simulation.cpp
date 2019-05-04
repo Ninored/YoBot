@@ -1,8 +1,3 @@
-// Memory leak detection
-#define _CRTDBG_MAP_ALLOC
-#include <cstdlib>
-#include <crtdbg.h>
-
 #include <iostream>
 #include "Simulator/BuildOrder.h"
 #include "Simulator/BuildOrderGoal.h"
@@ -19,13 +14,10 @@ int main(int argc, char** argv) {
 
   BuildOrder bo(GameState(tech.getInitialUnits(), tech.getInitialMinerals(),
                           tech.getInitialVespene()));
-  BuildOrderGoal goal;
-  goal.addUnit(sc2::UNIT_TYPEID::PROTOSS_IMMORTAL, 4);
-  std::cout << goal << std::endl;
 
-  /* 
-  YoBot(legacy):  95 sec 
-  YoBot(new):  95 sec 
+  /*
+  YoBot(legacy):  95 sec
+  YoBot(new):  95 sec
   PROBOEngine: 74 sec with chronoboost
   YoBot(Chronoboost): 78 sec
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_PYLON));
@@ -35,7 +27,7 @@ int main(int argc, char** argv) {
   bo.addItem(new BIAWaitGoal());
   */
 
-  /* 
+  /*
   PROBO Engine: 2min 48 with chronoboost
   YOBOT (legacy): 3 min 21
   YOBOT (new): 3 min 21
@@ -50,19 +42,27 @@ int main(int argc, char** argv) {
   bo.addItem(new BIAWaitGoal());
   */
 
+	// YOBOT(new): 90sec
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_GATEWAY));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_PYLON));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_ZEALOT));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_ZEALOT));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_ZEALOT));
+  bo.addItem(new BIAWaitGoal());
 
   std::cout << bo << std::endl;
 
-  Simulator simu;
-  std::cout << simu.visite(bo) << std::endl;
-  std::cout << simu << std::endl;
+  Simulator simu(GameState(tech.getInitialUnits(), tech.getInitialMinerals(),
+                           tech.getInitialVespene()));
 
-  _CrtDumpMemoryLeaks();
+  try {
+    std::cout << simu.visite(bo) << std::endl;
+    std::cout << "=============" << std::endl;
+    std::cout << bo << std::endl;
+
+  } catch (const std::exception ex) {
+    std::cerr << ex.what() << std::endl;
+	}
 
   return 0;
 }
