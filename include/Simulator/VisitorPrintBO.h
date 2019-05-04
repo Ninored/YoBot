@@ -30,19 +30,31 @@ class PrintBo : public BIOVisitor {
   virtual void visite(BIABuild& e) override {
     const Unit& u = tt.getUnit(e.getTarget());
     ss << "\t[BUILD]" << u.name << " " << e.getTime() << " s" << std::endl;
+    ss << "\t\t" << "timeMinerals: \t" << e.timeMinerals << " s" << std::endl;
+    ss << "\t\t" << "timeVespene: \t" << e.timeVespene << " s" << std::endl;
+    ss << "\t\t" << "timeFood: \t" << e.timeFood << " s" << std::endl;
+    ss << "\t\t" << "timeFreeUnit: \t" << e.timeFreeUnit << " s" << std::endl;
   }
 
   virtual void visite(BIAMineVespene& e) override {
     ss << "\t[Mine Vespene]" << std::endl;
+    ss << "\t\t" << "timeMinerals: \t" << e.timeMinerals << " s" << std::endl;
+    ss << "\t\t" << "timeVespene: \t" << e.timeVespene << " s" << std::endl;
+    ss << "\t\t" << "timeFood: \t" << e.timeFood << " s" << std::endl;
+    ss << "\t\t" << "timeFreeUnit: \t" << e.timeFreeUnit << " s" << std::endl;
   }
 
   virtual void visite(BIAWaitGoal& e) override {
     ss << "\t[WaitGoal] " << e.getTime() << " s" << std::endl;
-  }
+	}
 
   virtual void visite(BIAChronoboost& e) override {
     const Unit& u = tt.getUnit(e.getTarget());
-    ss << "\t[Chronoboost]" << u.name << " " << e.getTime() << " s" << std::endl;
+    ss << "\t[Chronoboost]" << u.name << " " << e.getTime() << " s";
+    ss << "\t\t" << "timeMinerals: \t" << e.timeMinerals << " s" << std::endl;
+    ss << "\t\t" << "timeVespene: \t" << e.timeVespene << " s" << std::endl;
+    ss << "\t\t" << "timeFood: \t" << e.timeFood << " s" << std::endl;
+    ss << "\t\t" << "timeFreeUnit: \t" << e.timeFreeUnit << " s" << std::endl;
   }
 };
 

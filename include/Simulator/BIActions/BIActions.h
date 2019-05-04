@@ -10,14 +10,25 @@ class BIA {
   int time;
 
  public:
-  BIA() : time(0) {}
+  BIA()
+      : time(0),
+        timeMinerals(0.0f),
+        timeVespene(0.0f),
+        timeFood(0.0f),
+        timeFreeUnit(0.0f) {}
   virtual ~BIA() {}
   void setTime(int newTime) { time = newTime; }
   int getTime() const { return time; }
-  
+
   virtual std::string getName() = 0;
   virtual void accept(BIOVisitor& v) = 0;
   virtual std::unique_ptr<BIA> clone() = 0;
+
+  // Metrics
+  float timeMinerals;
+  float timeVespene;
+  float timeFood;
+  float timeFreeUnit;
 };
 
 class BIABuild : public BIA {

@@ -10,9 +10,6 @@ namespace suboo {
 
 class Simulator : public BIOVisitor {
 	GameState gs;
-  // Metrics
-  int timeMinerals;
-  int timeVespene;
 
  public:
   Simulator(GameState& inital);

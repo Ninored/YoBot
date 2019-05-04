@@ -3,7 +3,7 @@
 namespace suboo {
 
 Simulator::Simulator(GameState& initial)
-    : timeMinerals(0), timeVespene(0), gs(initial) {}
+    : gs(initial) {}
 
 void Simulator::visite(BIABuild& e) {
   auto tt = TechTree::getTechTree();
@@ -16,8 +16,8 @@ void Simulator::visite(BIABuild& e) {
   int current = gs.getTimeStamp();
 
   waited = gs.waitForRessources(u.mineral_cost, u.vespene_cost);
-  timeMinerals += waited.first;
-  timeVespene += waited.second;
+  e.timeMinerals += waited.first;
+  e.timeVespene += waited.second;
 
   /* Prereq */
   if (u.prereq != 0 && !gs.hasFreeUnit(u.prereq)) {
@@ -31,13 +31,14 @@ void Simulator::visite(BIABuild& e) {
     } else if (u.action_status == u.BUSY) {
       gs.assignFreeUnit(u.builder, UnitInstance::BUSY, u.production_time);
     }
+    e.timeFreeUnit = gs.getTimeStamp() - current;
   }
 
   if (u.food_provided < 0 && gs.getAvailabelSupply() < -u.food_provided) {
     if (!gs.waitforFreeSupply(-u.food_provided)) {
       throw std::runtime_error("Insufficient food, missing pylons.");
     }
-    // bi.timeFood = gs.getTimeStamp() - cur;
+    e.timeFood = gs.getTimeStamp() - current;
   }
 
   gs.getMinerals() -= u.mineral_cost;
@@ -142,12 +143,8 @@ GameState Simulator::visite(BuildOrder& bo) {
 std::ostream& operator<<(std::ostream& os, const Simulator& simu) {
   os << "[Simulation]" << std::endl;
   os << "\t"
-     << "TotalTime: " << simu.gs.getTimeStamp() << std::endl
-     << "\t"
-     << "timeMinerals: " << simu.timeMinerals << std::endl
-     << "\t"
-     << "timeVespene: " << simu.timeVespene << std::endl;
-
+     << "TotalTime: " << simu.gs.getTimeStamp() << std::endl;
+	
   os << simu.gs << std::endl;
   return os;
 }

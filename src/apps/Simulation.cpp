@@ -42,7 +42,8 @@ int main(int argc, char** argv) {
   bo.addItem(new BIAWaitGoal());
   */
 
-	// YOBOT(new): 90sec
+	// PROBO engine: 1 min 50
+	// YOBOT(new): 1min 30 
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_GATEWAY));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_PYLON));
   bo.addItem(new BIABuild(sc2::UNIT_TYPEID::PROTOSS_ZEALOT));
