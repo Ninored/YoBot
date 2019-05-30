@@ -34,7 +34,8 @@ void Simulator::visite(BIABuild& e) {
     e.timeFreeUnit = gs.getTimeStamp() - current;
   }
 
-  if (u.food_provided < 0 && gs.getAvailabelSupply() < -u.food_provided) {
+	//food
+  if (u.food_provided < 0 && gs.getAvailableSupply() < -u.food_provided) {
     if (!gs.waitforFreeSupply(-u.food_provided)) {
       throw std::runtime_error("Insufficient food, missing pylons.");
     }

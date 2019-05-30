@@ -1,8 +1,16 @@
 #include "Simulator/GameState.h"
 #include <algorithm>
 #include "Simulator/UnitTypes.h"
+#include "TechTree/TechTree.h"
 
 namespace suboo {
+
+GameState::GameState()
+    : minerals(TechTree::getTechTree().getInitialMinerals()),
+      vespenes(TechTree::getTechTree().getInitialVespene()),
+      mps(0),
+      vps(0),
+      timestamp(0) {}
 
 GameState::GameState(const std::vector<UnitInstance>& units, int m, int v)
     : minerals(m), vespenes(v), mps(0), vps(0), timestamp(0) {
@@ -110,12 +118,14 @@ void GameState::step(int sec) {
 }
 
 // GET
-int GameState::getAvailabelSupply() const { return supply; }
+int GameState::getAvailableSupply() const { return supply; }
 int GameState::getMaxSupply() const { return supply; }
 int GameState::getTimeStamp() const { return timestamp; }
 float& GameState::getMinerals() { return minerals; }
+float GameState::getMinerals() const { return minerals; }
 float GameState::getMps() const { return mps; }
 float& GameState::getVespene() { return vespenes; }
+float GameState::getVespene() const { return vespenes; }
 float GameState::getVps() const { return vps; }
 std::vector<UnitInstance>& GameState::getFreeUnits() { return freeUnits; }
 std::vector<UnitInstance>& GameState::getBusyUnits() { return busyUnits; }
@@ -174,6 +184,16 @@ bool GameState::hasFreeUnit(UnitId unit) const {
                      [unit](auto& u) { return u.type == unit; });
 }
 
+bool GameState::hasFinishedUnit(UnitId unit) const {
+  return std::any_of(busyUnits.begin(), busyUnits.end(),
+                     [unit](auto& u) {
+                       return (u.type == unit && u.state != u.BUILDING);
+                     }) ||
+         std::any_of(freeUnits.begin(), freeUnits.end(), [unit](auto& u) {
+           return (u.type == unit && u.state != u.BUILDING);
+         });
+}
+
 // Wait function
 bool GameState::waitforUnitCompletion(UnitId id) {
   auto it = std::find_if(busyUnits.begin(), busyUnits.end(), [id](auto& u) {
@@ -188,11 +208,13 @@ bool GameState::waitforUnitCompletion(UnitId id) {
 }
 bool GameState::waitforUnitFree(UnitId id) {
   /* Search builder */
+	// FIXME: filtrer les busyUnits et ensuite trouver le minimume
   auto it = std::min_element(
       std::begin(busyUnits), std::end(busyUnits),
       [id](const UnitInstance& a, const UnitInstance& b) {
         return a.time_to_free - (a.time_with_chronoboost * 1.5) <
-               b.time_to_free - (b.time_with_chronoboost * 1.5);
+							 b.time_to_free - (b.time_with_chronoboost * 1.5) &&
+               a.type == id && b.type == id;
       });
 
   if (it == busyUnits.end()) return false;
@@ -206,7 +228,7 @@ bool GameState::waitforUnitFree(UnitId id) {
 }
 
 bool GameState::waitforFreeSupply(int nedded) {
-  int cur = getAvailabelSupply();
+  int cur = getAvailableSupply();
 
   if (cur >= nedded) {
     return true;
@@ -276,12 +298,26 @@ std::pair<int, int> GameState::waitForRessources(int min, int ves) {
 
 // Count
 int GameState::countUnit(UnitId id) const {
-  return freeUnits.size() + busyUnits.size() + attackUnits.size();
+  return std::count_if(freeUnits.begin(), freeUnits.end(),
+                       [id](auto& u) { return u.type == id; }) +
+         std::count_if(busyUnits.begin(), busyUnits.end(),
+                       [id](auto& u) { return u.type == id; }) +
+         std::count_if(attackUnits.begin(), attackUnits.end(),
+                       [id](auto& u) { return u.type == id; });
 }
-int GameState::countFreeUnit(UnitId id) const { return freeUnits.size(); }
+int GameState::countFreeUnit(UnitId id) const {
+  return std::count_if(freeUnits.begin(), freeUnits.end(), [id](auto& u) {
+    return u.type == id && u.state == UnitInstance::FREE;
+  });
+}
 
 // Tools
-int GameState::probesToStauration() const { return 1; }
+int GameState::probesToSaturation() const {
+  int nexi = countUnit(sc2::UNIT_TYPEID::PROTOSS_NEXUS);
+  int ass = countUnit(sc2::UNIT_TYPEID::PROTOSS_ASSIMILATOR);
+  int prob = countUnit(sc2::UNIT_TYPEID::PROTOSS_PROBE);
+  return (20 * nexi + 3 * ass) - prob;
+}
 
 std::ostream& operator<<(std::ostream& os, const GameState& state) {
   os << "[GS:" << state.timestamp << "]" << std::endl

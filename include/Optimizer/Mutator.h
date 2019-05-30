@@ -1,14 +1,17 @@
 #ifndef INCLUDE_OPTIMIZER_MUTATOR
 #define INCLUDE_OPTIMIZER_MUTATOR
 
+#include <random>
 #include "Simulator/BuildOrder.h"
-
 namespace suboo {
 // a BO Optimizer interface
 class boo {
  public:
   // returns delta seconds gained, 0 means unable to optimize
   // if delta > 0, an improved BuildOrder is returned
+  std::random_device rd;
+  std::mt19937 e;
+  boo() : e(rd()) {}
   virtual std::pair<int, BuildOrder> improve(const BuildOrder& base,
                                              int depth) = 0;
   virtual const char* getName() const = 0;

@@ -28,6 +28,7 @@ class GameState {
 
 
  public:
+  GameState();
   GameState(const std::vector<UnitInstance> & units, int m, int v);
   friend std::ostream& operator<<(std::ostream& os, const GameState& state);
 
@@ -35,12 +36,14 @@ class GameState {
   void step(int sec);
 
   // GET
-  int getAvailabelSupply() const;
+  int getAvailableSupply() const;
   int getMaxSupply() const;
   int getTimeStamp() const;
   float& getMinerals();
+  float getMinerals() const;
   float getMps() const;
   float& getVespene();
+  float getVespene() const;
   float getVps() const;
   std::vector<UnitInstance>& getFreeUnits();
   std::vector<UnitInstance>& getBusyUnits();
@@ -57,6 +60,7 @@ class GameState {
 
   // Has
   bool hasFreeUnit(UnitId unit) const;
+  bool hasFinishedUnit(UnitId unit) const;
 
   // Wait function
   bool waitforUnitFree(UnitId id);
@@ -70,7 +74,7 @@ class GameState {
   int countFreeUnit(UnitId id) const;
 
   // Tools
-  int probesToStauration() const;
+  int probesToSaturation() const;
 };
 }  // namespace suboo
 

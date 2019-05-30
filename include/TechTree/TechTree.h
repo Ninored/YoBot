@@ -108,7 +108,7 @@ class TechTree {
   int initial_minerales;
   int initial_vespene;
   std::vector<UnitInstance> initial_unitinstances;
-  TechTree() {}
+  TechTree(): initial_minerales(0), initial_vespene(0) {}
 
  public:
   static TechTree& getTechTree() {
